@@ -3,8 +3,8 @@ import {ref, reactive, onMounted, computed} from 'vue'
 import VueDatepicker from '@vuepic/vue-datepicker'
 import '@vuepic/vue-datepicker/dist/main.css'
 import router from '@/router'
-import { patientMethods } from '@/util/patient'
-import { omit } from "lodash";
+import { patientMethods } from '@/util/reservation.js'
+import {omit} from 'lodash'
 
 const selectedVal = reactive({
     doctorUuid: null,
@@ -36,7 +36,16 @@ const selectedVal = reactive({
     router.push({name: 'home'});
   }
 
-  function reservation () {
+  function reservation (selectedValO) {
+
+    const selectedVal = reactive({
+      ...omit(selectedValO, ['date', 'time']), // date와 time 속성을 제외한 나머지 속성들을 복사
+      dateTime: (selectedValO.date + selectedValO.time).toISOString()
+      // 서버로 보낼 때는 ISOString 문자열로 보내는 것이 안정적이다.
+    });
+
+    console.log(selectedVal);
+
     patientMethods.reservation(selectedVal);
   }
 
@@ -85,7 +94,7 @@ const selectedVal = reactive({
       </div>
     </div>
     <div>
-      <button type="button" class="btn btn-outline-success" @click="reservation">예약</button>
+      <button type="button" class="btn btn-outline-success" @click="reservation(selectedVal)">예약</button>
       <button type="button" class="btn btn-outline-warning" @click="historyBack">취소</button>
     </div>
   </div>

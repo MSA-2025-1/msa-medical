@@ -1,35 +1,35 @@
 package com.emr.slgi.patient.dto;
 
+import com.emr.slgi.util.ReservationErrorMessage;
+import com.emr.slgi.util.Validate;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.sql.Date;
 import java.sql.Time;
+import java.time.LocalDateTime;
 
-@Getter
-@Setter
+@Data
 public class ReservationForm {
 
-    
+    @NotEmpty(message = ReservationErrorMessage.CAN_NOT_FIND_PATIENT)
+    @Size(min = 36, max=36)
+    private String patientUuid; // 테스트용. 추후 JWT 추가되면 삭제.
 
-    @NotEmpty(message = "의사를 선택해주세요.")
-    @NotNull
-    @Size(min=4, max=4)
+    @NotEmpty(message = ReservationErrorMessage.CHOOSE_DOCTOR)
+    @Pattern(regexp = Validate.MEMBER_UUID_REGEX, message = ReservationErrorMessage.CHOOSE_DOCTOR)
+    @Size(min = 36, max = 36)
     private String doctorUuid;
 
-    @NotEmpty(message = "예약 날짜를 선택해주세요.")
-    @NotNull
-    private Date date;
+    @NotNull(message = ReservationErrorMessage.CHOOSE_DATE_TIME)
+    private LocalDateTime date;
 
-    @NotEmpty(message = "예약 시간을 선택해주세요.")
-    @NotNull
-    private Time time;
-
-    @NotEmpty(message = "증상을 입력해주세요.")
-    @NotNull
+    @NotEmpty(message = ReservationErrorMessage.WRITE_SYMPTOM)
     @Size(min = 1, max = 100)
     private String symptom;
 

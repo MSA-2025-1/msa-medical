@@ -16,11 +16,4 @@
     FROM TB_MEMBER
     WHERE id = #{id}
   </select>
-  <select id="getDoctorList">
-    SELECT
-      uuid,
-      name
-    FROM TB_MEMBER
-    WHERE member_role = 'R002'
-  </select>
 </mapper>
