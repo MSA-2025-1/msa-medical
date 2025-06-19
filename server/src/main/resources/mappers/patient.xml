@@ -10,7 +10,7 @@
         VALUES
             (
                 UUID(),
-                '550e8400-e29b-41d4-a716-446655440020', -- 임시 데이터
+                #{patientUuid}, -- 임시 데이터
                 #{doctorUuid},
                 'RS01', -- 임시 데이터
                 #{date},

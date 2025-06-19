@@ -14,8 +14,6 @@ const selectedVal = reactive({
     name: null
   });
 
-  console.log();
-
   const doctorList = ref();
 
   const selectDoctor = (doctor) => {
@@ -37,10 +35,12 @@ const selectedVal = reactive({
   }
 
   function reservation (selectedValO) {
-
+    console.log(selectedValO.date);
+    console.log(selectedValO.time);
     const selectedVal = reactive({
-      ...omit(selectedValO, ['date', 'time']), // date와 time 속성을 제외한 나머지 속성들을 복사
-      dateTime: (selectedValO.date + selectedValO.time).toISOString()
+      patientUuid : '550e8400-e29b-41d4-a716-446655440020',
+      ...omit(selectedValO, ['date', 'time', 'name']), // date와 time 속성을 제외한 나머지 속성들을 복사
+      dateTime: new Date(`${selectedValO.date}T${selectedValO.time}`).toISOString()
       // 서버로 보낼 때는 ISOString 문자열로 보내는 것이 안정적이다.
     });
 
@@ -76,6 +76,7 @@ const selectedVal = reactive({
     </div>
     <div class="my-3">
       <h3>일자</h3>
+      <!-- 날짜 형식 에러 해결하기 -->
       <VueDatepicker
           v-model="selectedVal.date" :format="'yyyy-MM-dd'" :min-date="minDate" :max-date="maxDate"
           :enable-time-picker="false"  :input-class="'form-control'" prevent-min-max-navigation

@@ -30,7 +30,7 @@ export const patientMethods = {
     reservation : async (selectedVal) => {
         await customFetch(
             ENDPOINTS.member.reservation, {
-                data: omit(selectedVal, ['name'])
+                data: selectedVal
             }
         )
         .then(

@@ -1,14 +1,7 @@
 package com.emr.slgi.util;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
+public class CommonErrorMessage {
 
-@RequiredArgsConstructor
-@Getter
-public enum CommonErrorMessage {
-
-    RETRY("다시 시도해주세요.");
-
-    private final String message;
+    public static final String RETRY = "다시 시도해주세요.";
 
 }

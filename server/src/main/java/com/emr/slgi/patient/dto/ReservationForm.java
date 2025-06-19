@@ -7,17 +7,14 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
 
-import java.sql.Date;
-import java.sql.Time;
 import java.time.LocalDateTime;
 
 @Data
 public class ReservationForm {
 
     @NotEmpty(message = ReservationErrorMessage.CAN_NOT_FIND_PATIENT)
+    @Pattern(regexp = Validate.MEMBER_UUID_REGEX, message = ReservationErrorMessage.CAN_NOT_FIND_PATIENT)
     @Size(min = 36, max=36)
     private String patientUuid; // 테스트용. 추후 JWT 추가되면 삭제.
 
@@ -27,7 +24,7 @@ public class ReservationForm {
     private String doctorUuid;
 
     @NotNull(message = ReservationErrorMessage.CHOOSE_DATE_TIME)
-    private LocalDateTime date;
+    private LocalDateTime dateTime;
 
     @NotEmpty(message = ReservationErrorMessage.WRITE_SYMPTOM)
     @Size(min = 1, max = 100)
