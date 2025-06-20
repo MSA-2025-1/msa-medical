@@ -2,7 +2,7 @@
 import {ref, reactive, onMounted, computed} from 'vue'
 import VueDatepicker from '@vuepic/vue-datepicker'
 import '@vuepic/vue-datepicker/dist/main.css'
-import router from '@/router'
+import {common} from '@/util/common.js'
 import { patientMethods } from '@/util/reservation.js'
 import {omit} from 'lodash'
 
@@ -28,19 +28,25 @@ const selectedVal = reactive({
 
   const selectTime = (time) => {
     selectedVal.time = time;
+    console.log(selectedVal.time);
   }
 
-  const historyBack = () => {
-    router.push({name: 'home'});
+  function historyBack () {
+    common.historyBack();
   }
 
   function reservation (selectedValO) {
     console.log(selectedValO.date);
     console.log(selectedValO.time);
+
+    // 전송 전 데이터 있는지 확인하는 검증 로직 추가하기
+
+
     const selectedVal = reactive({
       patientUuid : '550e8400-e29b-41d4-a716-446655440020',
       ...omit(selectedValO, ['date', 'time', 'name']), // date와 time 속성을 제외한 나머지 속성들을 복사
-      dateTime: new Date(`${selectedValO.date}T${selectedValO.time}`).toISOString()
+      dateTime:
+        `${selectedValO.date.toISOString().slice(0, 10)}T${selectedValO.time}:00`
       // 서버로 보낼 때는 ISOString 문자열로 보내는 것이 안정적이다.
     });
 

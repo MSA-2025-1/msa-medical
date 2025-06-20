@@ -4,6 +4,16 @@
 
 <mapper namespace="com.emr.slgi.patient.dao.ReservationDAO">
 
+    <sql id="today">
+        #{reservationDate} > NOW()
+        AND
+    </sql>
+
+    <sql id="afterToday">
+        DATE(RESERVATION_DATE) = DATE(#{reservationDate})
+        AND
+    </sql>
+
     <insert id="makeReservation">
         INSERT INTO
             TB_RESERVATION
@@ -13,9 +23,31 @@
                 #{patientUuid}, -- 임시 데이터
                 #{doctorUuid},
                 'RS01', -- 임시 데이터
-                #{date},
+                #{dateTime},
                 #{symptom}
             )
     </insert>
+
+    <select id="getReservationList"
+            parameterType="com.emr.slgi.patient.dto.Reservation"
+            resultType="com.emr.slgi.patient.dto.ReservationList"
+    >
+        SELECT
+            PATIENT_UUID, DOCTOR_UUID, RESERVATION_DATE
+        FROM
+            TB_RESERVATION
+        WHERE
+            DOCTOR_UUID = #{doctorUuid}
+            AND
+            <choose>
+                <when test="isToday">
+                    <include refid="today"/>
+                </when>
+                <otherwise>
+                    <include refid="afterToday"/>
+                </otherwise>
+            </choose>
+            STATUS IN ('RS01', 'RS02')
+    </select>
 
 </mapper>

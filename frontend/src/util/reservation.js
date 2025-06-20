@@ -28,8 +28,12 @@ export const patientMethods = {
 
     }),
     reservation : async (selectedVal) => {
+
+        console.log(selectedVal);
+
         await customFetch(
-            ENDPOINTS.member.reservation, {
+            ENDPOINTS.member.reservation,
+            {
                 data: selectedVal
             }
         )
