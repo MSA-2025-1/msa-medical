@@ -14,36 +14,73 @@ const selectedVal = reactive({
     name: null
   });
 
+  const reservationChk = reactive({
+    doctorChk : false,
+    dateChk : false,
+    timeChk : false,
+    symptomChk : false
+  });
+
   const doctorList = ref();
+  const reservationTime = ref();
 
   const selectDoctor = (doctor) => {
     selectedVal.doctorUuid = doctor.uuid;
     selectedVal.name = doctor.name;
+
+    reservationChk.doctorChk = true;
+
+  }
+
+  const handleDate = (selectedDate) => {
+
+
+    // selectedVal.date = selectedDate;
+
+    reservationChk.dateChk = true;
+
+    reservationTime.value = patientMethods.getReservationTime(selectedVal);
+
   }
 
   const minDate = new Date();
   const maxDate = new Date().setDate(minDate.getDate() + 7);
 
-  const reservationTime = patientMethods.reservationTime;
+
 
   const selectTime = (time) => {
+
     selectedVal.time = time;
-    console.log(selectedVal.time);
+
+    reservationChk.timeChk = true;
+
   }
 
-  function historyBack () {
-    common.historyBack();
+  const writeSymptom = (symptom) => {
+    if(symptom !== null) {
+      reservationChk.symptomChk = true;
+    }
   }
 
-  function reservation (selectedValO) {
+  function goHome () {
+
+    common.goHome();
+
+  }
+
+  function reservation (selectedValO, reservationChk) {
     console.log(selectedValO.date);
     console.log(selectedValO.time);
 
-    // 전송 전 데이터 있는지 확인하는 검증 로직 추가하기
 
+
+    // 전송 전 데이터 있는지 확인하는 검증 로직 추가하기
+    if(reservationChk.forEach()) {
+      return;
+    }
 
     const selectedVal = reactive({
-      patientUuid : '550e8400-e29b-41d4-a716-446655440020',
+      patientUuid : '550e8400-e29b-41d4-a716-446655440020', // 테스트용 환자 아이디
       ...omit(selectedValO, ['date', 'time', 'name']), // date와 time 속성을 제외한 나머지 속성들을 복사
       dateTime:
         `${selectedValO.date.toISOString().slice(0, 10)}T${selectedValO.time}:00`
@@ -71,38 +108,47 @@ const selectedVal = reactive({
     <h2>예약등록</h2>
     <div class="dropdown my-3">
       <h3>의사</h3>
-      <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+      <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" v-cloak>
         {{ selectedVal?.name || '의사를 선택해주세요.' }}
       </button>
       <ul class="dropdown-menu">
           <template v-for="doctor in doctorList" :key="doctor.uuid">
-            <li class="dropdown-item" @click="selectDoctor(doctor)">{{doctor.name}}</li>
+            <li class="dropdown-item" @click="selectDoctor(doctor)" v-cloak>{{doctor.name}}</li>
           </template>
       </ul>
     </div>
-    <div class="my-3">
-      <h3>일자</h3>
-      <!-- 날짜 형식 에러 해결하기 -->
-      <VueDatepicker
-          v-model="selectedVal.date" :format="'yyyy-MM-dd'" :min-date="minDate" :max-date="maxDate"
-          :enable-time-picker="false"  :input-class="'form-control'" prevent-min-max-navigation
-      />
-    </div>
-    <div class="my-3">
-      <h3>시간</h3>
-      <template v-for="time in reservationTime">
-        <button type="button" class="btn btn-primary btn-lg" @click="selectTime(time)">{{time}}</button>
-      </template>
-    </div>
-    <div>
-      <div class="my-3 input-group">
-        <span class="input-group-text">증상</span>
-        <textarea class="form-control" aria-label="symptom" v-model="selectedVal.symptom"></textarea>
+    <template v-if="reservationChk.doctorChk">
+      <div class="my-3">
+        <h3>일자</h3>
+        <VueDatepicker
+            :model-value = "selectedVal.date" :format="'yyyy-MM-dd'" :min-date="minDate" :max-date="maxDate"
+            :enable-time-picker="false"  :input-class="'form-control'" :esc-close = "false" :space-confirm = "false"
+            @update:model-value = "handleDate" prevent-min-max-navigation
+        />
       </div>
-    </div>
-    <div>
-      <button type="button" class="btn btn-outline-success" @click="reservation(selectedVal)">예약</button>
-      <button type="button" class="btn btn-outline-warning" @click="historyBack">취소</button>
-    </div>
+    </template>
+    <template v-if="reservationChk.dateChk">
+      <div class="my-3">
+        <h3>시간</h3>
+        <template v-for="time in reservationTime" :key="time">
+          <button type="button" class="btn btn-primary btn-lg" @click="selectTime(time)" ref="selectedVal.time" v-cloak>{{time}}</button>
+        </template>
+      </div>
+    </template>
+    <template v-if="reservationChk.timeChk">
+      <div>
+        <div class="my-3 input-group">
+          <span class="input-group-text">증상</span>
+          <textarea class="form-control" aria-label="symptom" v-model="selectedVal.symptom"
+                    @change = "writeSymptom(selectedVal.symptom)" maxlength="100"
+                    placeholder="100자 이내로 작성해주세요.">
+          </textarea>
+        </div>
+      </div>
+    </template>
+    <template v-if="reservationChk.symptomChk">
+        <button type="button" class="btn btn-outline-success" @click="reservation(selectedVal)">예약</button>
+    </template>
+    <button type="button" class="btn btn-outline-warning" @click="goHome">취소</button>
   </div>
 </template>

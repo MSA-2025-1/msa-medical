@@ -3,13 +3,18 @@ import {customFetch} from "@/util/customFetch.js";
 import {ENDPOINTS} from "@/util/endpoints.js";
 import router from "@/router/index.js";
 import {omit} from "lodash";
+import {common} from "@/util/common.js";
 
 export const patientMethods = {
-    reservationTime : computed(() => {
+    setReservationTime : computed((reservationList) => {
+
+
 
         const start = new Date();
         const end = new Date();
         const slots = [];
+
+
 
         start.setHours(9, 0, 0, 0); // 9:00 AM
         end.setHours(18, 0, 0, 0); // 6:00 PM
@@ -27,6 +32,28 @@ export const patientMethods = {
         return slots;
 
     }),
+    reservationTime : async (selectedVal) => {
+
+        try{
+
+            const response = await customFetch(
+                ENDPOINTS.patient.reservationList,
+                {
+                    data: selectedVal
+                }
+            );
+
+            if(response.status === 200) {
+                return response.data?.reservationList;
+            }
+
+        } catch(err) {
+            common.errMsg(err);
+        }
+
+
+
+    },
     reservation : async (selectedVal) => {
 
         console.log(selectedVal);
@@ -46,7 +73,7 @@ export const patientMethods = {
         )
         .catch(
             err => {
-                err.response?.data?.message ? alert(err.response?.data?.message) : alert("실행 중 오류가 발생했습니다. 다시 실행해주세요.");
+                common.errMsg(err);
             }
         )
     },
@@ -61,9 +88,25 @@ export const patientMethods = {
             }
 
         } catch (err) {
-            err.response?.data?.message ? alert(err.response?.data?.message) : alert("실행 중 오류가 발생했습니다. 다시 실행해주세요.");
+            common.errMsg(err);
             await router.push({name: 'home'});
         }
-    }
+    },
 
+    getReservationTime: (selectedVal) => {
+
+        const today = new Date();
+
+        // 오늘 날짜인지 검증해
+        // 오늘 날짜면 현재 시간 기준 1시간 뒤로 시간 데이터 수정해서
+        // reservationTime 함수 실행.
+        if(selectedVal.date === today.getDate()) {
+
+        }
+
+        // 오늘 날짜가 아니면 그냥 그대로 보내기
+        const reservationList = this.reservationTime(selectedVal);
+
+        return null;
+    }
 }
