@@ -16,14 +16,10 @@ export const ENDPOINTS = {
             method: 'get',
             url: `/member/${memberId}`
         }),
-        register: {
-            method: 'post',
-            url: '/member'
-        },
-        reservation: {
+        reservation: (memberId) => ({
             method: 'get',
             url: `/patient/${memberId}`
-        }
+        })
     },
     doctor: {
         list: {

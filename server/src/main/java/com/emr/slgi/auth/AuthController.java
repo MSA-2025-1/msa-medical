@@ -32,4 +32,9 @@ public class AuthController {
         boolean exists = authService.checkIdDuplicate(userid);
         return ResponseEntity.ok(Map.of("exists", exists));
     }
+
+    // @PostMapping
+    // public ResponseEntity<?> createByStaff(CreateByStaffDTO createByStaffDTO) {
+    //     return ResponseEntity.status(HttpStatus.CREATED).build();
+    // }
 }

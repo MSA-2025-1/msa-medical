@@ -41,4 +41,8 @@ public class AuthService {
     public boolean checkIdDuplicate(String userid) {
         return credentialsDAO.existsByUserid(userid);
     }
+
+    // public void createByStaff() {
+    //     memberDAO.createPatient();
+    // }
 }
