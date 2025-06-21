@@ -27,10 +27,12 @@ public class ReservationService {
 
     // 환자 직접 등록 시 날짜 선택하면 해당 일자의 예약 데이터 가져오기.
     public Optional<List<ReservationList>> getReservationList(Reservation reservation) {
-
-        reservation.setToday(
-            reservation.getReservationDate().toLocalDate().isEqual(LocalDate.now())
-        );
+        
+        // 오늘이면 today 값 true로
+        if(reservation.getReservationDate().toLocalDate().isEqual(LocalDate.now())) {
+            reservation.setToday(true);
+            log.info(reservation.toString());
+        }
 
         return Optional.ofNullable(rDao.getReservationList(reservation));
 

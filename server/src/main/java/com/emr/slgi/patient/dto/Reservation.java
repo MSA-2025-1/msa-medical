@@ -13,6 +13,6 @@ public class Reservation {
     private String status;
     private LocalDateTime reservationDate;
     private String symptom;
-    private boolean isToday;
+    private boolean isToday = false;
 
 }

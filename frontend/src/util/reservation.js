@@ -6,15 +6,23 @@ import {omit} from "lodash";
 import {common} from "@/util/common.js";
 
 export const patientMethods = {
-    setReservationTime : computed((reservationList) => {
+    generateTimeSlots : reservationList => {
 
+        console.log("예약 데이터 처리 부분");
+        console.log(reservationList);
 
+        const alreadyReservatedSlots = new Set(
+            reservationList.value.map(item => {
+                const date = new Date(item.reservationDate);
+                const hours = date.getHours().toString().padStart(2, '0');
+                const minutes = date.getMinutes().toString().padStart(2, '0');
+                return `${hours}:${minutes}`;
+            })
+        );
 
         const start = new Date();
         const end = new Date();
-        const slots = [];
-
-
+        const availableSlots = new Set();
 
         start.setHours(9, 0, 0, 0); // 9:00 AM
         end.setHours(18, 0, 0, 0); // 6:00 PM
@@ -24,18 +32,24 @@ export const patientMethods = {
             const hours = start.getHours().toString().padStart(2, '0');
             const minutes = start.getMinutes().toString().padStart(2, '0');
 
-            slots.push(`${hours}:${minutes}`);
+            availableSlots.add(`${hours}:${minutes}`);
             start.setMinutes(start.getMinutes() + 10);
 
         }
 
-        return slots;
+        const diff = new Set(
+            [...availableSlots].filter(slot => !alreadyReservatedSlots.has(slot))
+        );
 
-    }),
+        console.log(diff);
+
+        return diff;
+
+    },
     reservationTime : async (selectedVal) => {
 
         try{
-
+            console.log("fetch 전송");
             const response = await customFetch(
                 ENDPOINTS.patient.reservationList,
                 {
@@ -44,14 +58,15 @@ export const patientMethods = {
             );
 
             if(response.status === 200) {
+
+                console.log(response.data?.reservationList);
                 return response.data?.reservationList;
+
             }
 
         } catch(err) {
             common.errMsg(err);
         }
-
-
 
     },
     reservation : async (selectedVal) => {
@@ -93,20 +108,31 @@ export const patientMethods = {
         }
     },
 
-    getReservationTime: (selectedVal) => {
+    getReservationTime: async(selectedVal) => {
 
         const today = new Date();
+        const reservationList = ref([]);
 
+        console.log("fetch에 전송하는 일시 : " + selectedVal.reservationDate);
         // 오늘 날짜인지 검증해
-        // 오늘 날짜면 현재 시간 기준 1시간 뒤로 시간 데이터 수정해서
-        // reservationTime 함수 실행.
-        if(selectedVal.date === today.getDate()) {
+        // 오늘 날짜가 아니면 그냥 그대로 보내기
+        if(selectedVal.reservationDate.toDateString() === today.toDateString()) {
 
+            // 오늘 날짜면 현재 시간 기준 1시간 뒤로 시간 데이터 수정해서
+            // reservationTime 함수 실행.
+            if(selectedVal.reservationDate.getHours() > 8  && selectedVal.reservationDate.getHours() < 19) {
+                console.log("a");
+                selectedVal.reservationDate.setHours(selectedVal.reservationDate.getHours() + 1);
+            }
+            
         }
 
-        // 오늘 날짜가 아니면 그냥 그대로 보내기
-        const reservationList = this.reservationTime(selectedVal);
+        const response = await patientMethods.reservationTime(selectedVal);
+        reservationList.value = Array.isArray(response) ? response : [];
+        
+        return patientMethods.generateTimeSlots(
+            reservationList
+        );
 
-        return null;
     }
 }

@@ -4,14 +4,18 @@
 
 <mapper namespace="com.emr.slgi.patient.dao.ReservationDAO">
 
-    <sql id="today">
-        #{reservationDate} > NOW()
+    <sql id="afterToday">
+        RESERVATION_DATE > #{reservationDate}
         AND
     </sql>
 
-    <sql id="afterToday">
-        DATE(RESERVATION_DATE) = DATE(#{reservationDate})
-        AND
+    <sql id="today">
+        <![CDATA[
+            RESERVATION_DATE >= #{reservationDate}
+            AND
+            RESERVATION_DATE < DATE_ADD(DATE(#{reservationDate}), INTERVAL 1 DAY)
+            AND
+        ]]>
     </sql>
 
     <insert id="makeReservation">

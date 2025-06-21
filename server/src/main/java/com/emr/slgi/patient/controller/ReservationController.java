@@ -16,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
@@ -45,11 +46,18 @@ public class ReservationController {
     @PostMapping("/getReservationList")
     public ResponseEntity<Map<String, List<ReservationList>>> getReservationList(@RequestBody Reservation reservation) {
 
+        log.info(reservation.toString());
+        log.info("예약 시각: {}", reservation.getReservationDate());
+        log.info("현재 시각: {}", LocalDateTime.now());
+        log.info("null 결과 : {}", reservation.getReservationDate() == null);
+        log.info("비교 결과: {}", reservation.getReservationDate().toLocalDate().isBefore(LocalDate.now()));
+
+
         if(reservation.getDoctorUuid() == null || Validate.regexValidate(Map.of(Validate.MEMBER_UUID_REGEX, reservation.getDoctorUuid())).contains(false)) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, ReservationErrorMessage.CHOOSE_DOCTOR);
         }
 
-        if(reservation.getReservationDate().isBefore(LocalDateTime.now()) || reservation.getReservationDate() == null) {
+        if(reservation.getReservationDate() == null || reservation.getReservationDate().toLocalDate().isBefore(LocalDate.now())) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, ReservationErrorMessage.CAN_NOT_FIND_RESERVATION_DATE);
         }
 

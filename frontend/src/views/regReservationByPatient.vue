@@ -8,7 +8,7 @@ import {omit} from 'lodash'
 
 const selectedVal = reactive({
     doctorUuid: null,
-    date: new Date(),
+    reservationDate: new Date(),
     time: null,
     symptom: null,
     name: null
@@ -32,14 +32,16 @@ const selectedVal = reactive({
 
   }
 
-  const handleDate = (selectedDate) => {
+  const handleDate = async (selectedDate) => {
 
-
-    // selectedVal.date = selectedDate;
+    console.log("handleDate selectedDate:", selectedDate);
+    selectedVal.reservationDate = selectedDate;
 
     reservationChk.dateChk = true;
 
-    reservationTime.value = patientMethods.getReservationTime(selectedVal);
+    reservationTime.value = await patientMethods.getReservationTime(selectedVal);
+    console.log("다시 프론트");
+    console.log(reservationTime.value);
 
   }
 
@@ -57,9 +59,13 @@ const selectedVal = reactive({
   }
 
   const writeSymptom = (symptom) => {
+
     if(symptom !== null) {
+
       reservationChk.symptomChk = true;
+
     }
+
   }
 
   function goHome () {
@@ -68,22 +74,22 @@ const selectedVal = reactive({
 
   }
 
-  function reservation (selectedValO, reservationChk) {
+  function reservation (selectedValO) {
     console.log(selectedValO.date);
     console.log(selectedValO.time);
 
 
 
     // 전송 전 데이터 있는지 확인하는 검증 로직 추가하기
-    if(reservationChk.forEach()) {
-      return;
-    }
+
+
+
 
     const selectedVal = reactive({
       patientUuid : '550e8400-e29b-41d4-a716-446655440020', // 테스트용 환자 아이디
       ...omit(selectedValO, ['date', 'time', 'name']), // date와 time 속성을 제외한 나머지 속성들을 복사
       dateTime:
-        `${selectedValO.date.toISOString().slice(0, 10)}T${selectedValO.time}:00`
+        `${selectedValO.reservationDate.toISOString().slice(0, 10)}T${selectedValO.time}:00`
       // 서버로 보낼 때는 ISOString 문자열로 보내는 것이 안정적이다.
     });
 
@@ -121,16 +127,16 @@ const selectedVal = reactive({
       <div class="my-3">
         <h3>일자</h3>
         <VueDatepicker
-            :model-value = "selectedVal.date" :format="'yyyy-MM-dd'" :min-date="minDate" :max-date="maxDate"
+            :model-value = "selectedVal.reservationDate" :format="'yyyy-MM-dd'" :min-date="minDate" :max-date="maxDate"
             :enable-time-picker="false"  :input-class="'form-control'" :esc-close = "false" :space-confirm = "false"
             @update:model-value = "handleDate" prevent-min-max-navigation
         />
       </div>
     </template>
-    <template v-if="reservationChk.dateChk">
+    <template v-if="reservationChk.dateChk && reservationTime">
       <div class="my-3">
         <h3>시간</h3>
-        <template v-for="time in reservationTime" :key="time">
+        <template v-for="time in Array.from(reservationTime).sort()" :key="time">
           <button type="button" class="btn btn-primary btn-lg" @click="selectTime(time)" ref="selectedVal.time" v-cloak>{{time}}</button>
         </template>
       </div>
