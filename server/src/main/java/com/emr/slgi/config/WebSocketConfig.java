@@ -13,12 +13,12 @@ import lombok.RequiredArgsConstructor;
 @EnableWebSocketMessageBroker
 @RequiredArgsConstructor
 public class WebSocketConfig  implements WebSocketMessageBrokerConfigurer{
-	private final StompHandler stompHandler;
-
-	@Override
-	public void configureClientInboundChannel(ChannelRegistration registration) {
-		registration.interceptors(stompHandler);
-	}
+//	private final StompHandler stompHandler;
+//
+//	@Override
+//	public void configureClientInboundChannel(ChannelRegistration registration) {
+//		registration.interceptors(stompHandler);
+//	}
 
 	@Override
 	public void configureMessageBroker(MessageBrokerRegistry config) {
