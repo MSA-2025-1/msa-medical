@@ -35,7 +35,7 @@ public class ReceptionController {
         return ResponseEntity.ok().build();
     }
 
-    @PreAuthorize("hasRole('DOCTOR', 'NURSE')")
+    @PreAuthorize("hasAnyRole('DOCTOR', 'NURSE')")
     @GetMapping("/getWaitingList")
     public ResponseEntity<Map<String, List<WaitingList>>> getWaitingList() {
 
