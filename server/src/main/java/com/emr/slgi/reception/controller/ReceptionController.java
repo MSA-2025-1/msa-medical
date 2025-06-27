@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -23,6 +24,7 @@ public class ReceptionController {
 
     private final ReceptionService receptionService;
 
+    @PreAuthorize("hasRole('DOCTOR', 'NURSE')")
     @PostMapping
     public ResponseEntity<?> acceptPatientByStaff(@RequestBody @Valid ReceptionInfo receptionInfo) {
 
@@ -33,6 +35,7 @@ public class ReceptionController {
         return ResponseEntity.ok().build();
     }
 
+    @PreAuthorize("hasRole('DOCTOR', 'NURSE')")
     @GetMapping("/getWaitingList")
     public ResponseEntity<Map<String, List<WaitingList>>> getWaitingList() {
 
