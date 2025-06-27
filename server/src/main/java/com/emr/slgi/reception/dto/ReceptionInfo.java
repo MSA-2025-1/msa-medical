@@ -40,7 +40,7 @@ public class ReceptionInfo {
     private String symptom;
 
     @NotNull(message = ReservationErrorMessage.CHOOSE_DATE_TIME)
-    private OffsetDateTime dateTime;
+    private LocalDateTime dateTime;
 
 
 }
