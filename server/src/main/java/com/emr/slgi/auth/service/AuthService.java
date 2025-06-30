@@ -3,23 +3,20 @@ package com.emr.slgi.auth.service;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import com.emr.slgi.auth.domain.Credentials;
+import com.emr.slgi.auth.dto.CredentialsCreateDTO;
 import com.emr.slgi.auth.dto.LoginDTO;
 import com.emr.slgi.auth.dto.LogoutDTO;
 import com.emr.slgi.auth.dto.RefreshTokenDTO;
 import com.emr.slgi.auth.dto.RegisterByPatientDTO;
-import com.emr.slgi.credentials.Credentials;
-import com.emr.slgi.credentials.CredentialsDAO;
-import com.emr.slgi.credentials.dto.CredentialsCreateDTO;
-import com.emr.slgi.member.Member;
-import com.emr.slgi.member.MemberDAO;
-import com.emr.slgi.member.dto.MemberCreateDTO;
+import com.emr.slgi.member.domain.Member;
+import com.emr.slgi.member.service.MemberService;
 import com.emr.slgi.util.JwtUtil;
 
 import io.jsonwebtoken.Claims;
@@ -30,8 +27,9 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 @Slf4j
 public class AuthService {
-    private final MemberDAO memberDAO;
-    private final CredentialsDAO credentialsDAO;
+
+    private final CredentialsService credentialsService;
+    private final MemberService memberService;
     private final RefreshTokenService refreshTokenService;
     private final JwtUtil jwtUtil;
 
@@ -42,29 +40,22 @@ public class AuthService {
         // TODO: transaction 추가
         // TODO: 주민번호, 전화번호 중복 확인 후 처리
         // TODO: 아이디 중복 확인 후 처리
-        String uuid = UUID.randomUUID().toString();
-        MemberCreateDTO memberCreateDTO = new MemberCreateDTO(
-            uuid,
-            registerByPatientDTO.getName(),
-            registerByPatientDTO.getRrn(),
-            registerByPatientDTO.getPhone()
-        );
-        memberDAO.createPatient(memberCreateDTO);
+        String uuid = memberService.createPatient(registerByPatientDTO);
         CredentialsCreateDTO credentialsCreateDTO = new CredentialsCreateDTO(
             uuid,
             registerByPatientDTO.getUserid(),
             registerByPatientDTO.getPassword()
         );
-        credentialsDAO.create(credentialsCreateDTO);
+        credentialsService.create(credentialsCreateDTO);
     }
 
     public boolean checkIdDuplicate(String userid) {
-        return credentialsDAO.existsByUserid(userid);
+        return credentialsService.existsByUserid(userid);
     }
 
     public Map<String, String> login(LoginDTO loginDTO) {
         Map<String, String> map = new HashMap<>();
-        Credentials credentials = credentialsDAO.getMemberCredentials(loginDTO.getUserid());
+        Credentials credentials = credentialsService.getMemberCredentials(loginDTO);
         if (credentials == null || !credentials.getPassword().equals(loginDTO.getPassword())) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "아이디나 비밀번호가 틀렸습니다.");
         }
@@ -74,7 +65,7 @@ public class AuthService {
     }
 
     public String createAccessToken(String memberUuid) {
-        Member member = memberDAO.getByUuid(memberUuid);
+        Member member = memberService.getByUuid(memberUuid);
 
         Map<String, String> map = Map.of(
             "uuid", member.getUuid(),

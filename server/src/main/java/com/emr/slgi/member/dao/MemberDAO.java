@@ -1,9 +1,10 @@
-package com.emr.slgi.member;
+package com.emr.slgi.member.dao;
 
 import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
 
+import com.emr.slgi.member.domain.Member;
 import com.emr.slgi.member.dto.MemberCreateDTO;
 import com.emr.slgi.member.dto.MemberSearchDTO;
 

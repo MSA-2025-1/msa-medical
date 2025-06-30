@@ -1,4 +1,4 @@
-package com.emr.slgi.member;
+package com.emr.slgi.member.domain;
 
 import java.time.LocalDateTime;
 

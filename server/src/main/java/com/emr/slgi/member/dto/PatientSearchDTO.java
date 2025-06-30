@@ -1,4 +1,4 @@
-package com.emr.slgi.patient.dto;
+package com.emr.slgi.member.dto;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

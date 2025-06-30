@@ -1,4 +1,4 @@
-package com.emr.slgi.credentials;
+package com.emr.slgi.auth.domain;
 
 import java.time.LocalDateTime;
 

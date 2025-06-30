@@ -1,8 +1,9 @@
-package com.emr.slgi.credentials;
+package com.emr.slgi.auth.dao;
 
 import org.apache.ibatis.annotations.Mapper;
 
-import com.emr.slgi.credentials.dto.CredentialsCreateDTO;
+import com.emr.slgi.auth.domain.Credentials;
+import com.emr.slgi.auth.dto.CredentialsCreateDTO;
 
 @Mapper
 public interface CredentialsDAO {
