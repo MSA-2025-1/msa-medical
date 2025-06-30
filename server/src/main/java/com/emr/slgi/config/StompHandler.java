@@ -23,17 +23,16 @@ public class StompHandler implements ChannelInterceptor{
 	        }
 		
 		if (StompCommand.CONNECT == accessor.getCommand()) {
+			
 		    String sender = accessor.getFirstNativeHeader("sender");
-		    if (sender == null || sender.isBlank()) {
-		        log.warn("WebSocket CONNECT 거부: sender 정보 없음 (로그인 안 된 사용자)");
-		        log.info("preSend() CONNECT message = {}", message);
-	            log.info("preSend() CONNECT channel = {}", channel);
-	            log.info("preSend() CONNECT accessor = {}", accessor);
-	            
+		    String token = accessor.getFirstNativeHeader("token");
+
+		    if (token == null || token.isBlank()) {
 		        throw new IllegalArgumentException("로그인된 사용자만 접속 가능합니다.");
 		    }
 
 		    log.info("CONNECT 요청한 사용자 = {}", sender);
+		    log.info("CONNECT 요청한 사용자 = {}", token);
 		}
 		return message;
 	}

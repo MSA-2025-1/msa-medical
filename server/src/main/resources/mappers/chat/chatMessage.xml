@@ -6,13 +6,10 @@
   <mapper namespace="com.emr.slgi.chat.DAO.ChatMessageDAO">
   
   	<select id="getList">
-
    	select *
   	from tb_chat_message
   	where room_id = #{roomId}
-  
 	</select>
-	
 	
 	<insert id = "saveMessage"  useGeneratedKeys="true" keyProperty="messageId" >
 	insert into TB_CHAT_message (room_id, uuid,content)

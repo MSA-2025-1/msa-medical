@@ -18,13 +18,13 @@
 </template>
 
 <script setup>
-import { useAuthStore } from '@/stores/counter';
+import { useUserStore } from '@/stores/userStore';
 import { customFetch } from '@/util/customFetch';
 import { ENDPOINTS } from '@/util/endpoints';
 import { Client } from '@stomp/stompjs';
 import SockJS from 'sockjs-client';
 
-import { onMounted, reactive } from 'vue';
+import { computed, onMounted, reactive } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
     onMounted(() => {
         loadChatName()
@@ -34,9 +34,11 @@ import { useRoute, useRouter } from 'vue-router';
     })
     const route = useRoute()
     const router = useRouter()
-    const auth = useAuthStore()
-    const uuid = auth.user.uuid
     const roomId= route.params.roomId
+    const userStore = useUserStore();
+    const uuid = computed(() => userStore?.user.uuid);
+    const token = computed(() => userStore?.token.uuid);
+
 
     const state = reactive({
         content:'',
@@ -48,7 +50,8 @@ import { useRoute, useRouter } from 'vue-router';
     const client = new Client({
         webSocketFactory:() => new SockJS('/ws'),
         connectHeaders:{
-            sender:uuid
+            sender:uuid,
+            token: token,
         },
         onConnect: ()=>{
             client.subscribe(`/sub/chatroom/${roomId}`, async (message) => {

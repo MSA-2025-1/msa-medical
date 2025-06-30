@@ -29,15 +29,15 @@
   
 import ChatCreate from './ChatCreate.vue'
 import alarm from './Alarm.vue'
-import { useAuthStore} from '@/stores/counter';
 import { customFetch } from '@/util/customFetch';
 import {onMounted, onUnmounted, provide, reactive, ref } from 'vue';
 import { Client } from '@stomp/stompjs';
 import SockJS from 'sockjs-client';
 import { useRouter } from 'vue-router';
 
-  const auth = useAuthStore();
-  const uuid = auth.user.uuid;
+  const userStore = useUserStore();
+  const uuid = userStore.user?.uuid ?? ''
+
   const alarmList = ref([])
   const create = ref(false)
   const showModal = ref(false)
@@ -48,6 +48,7 @@ import { useRouter } from 'vue-router';
 
   import { computed } from 'vue'
 import { ENDPOINTS } from '@/util/endpoints';
+import { useUserStore } from '@/stores/userStore';
 
   const totalCount = computed(() => {
   return state.chatList.reduce((sum, room) => sum + room.count, 0)

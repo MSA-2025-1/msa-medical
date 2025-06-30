@@ -31,7 +31,7 @@ public class AuthController {
     }
 
     @GetMapping("/check-id")
-    public ResponseEntity<?> checkIdDuplicate(@RequestParam String userid) {
+    public ResponseEntity<?> checkIdDuplicate(@RequestParam("userid") String userid) {
         boolean exists = authService.checkIdDuplicate(userid);
         return ResponseEntity.ok(Map.of("exists", exists));
     }

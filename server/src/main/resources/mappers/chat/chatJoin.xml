@@ -21,7 +21,6 @@
 
 </update>
 
-
 <update id="updateOutTime">
 	update TB_CHAT_JOIN
 	set out_time = now()
