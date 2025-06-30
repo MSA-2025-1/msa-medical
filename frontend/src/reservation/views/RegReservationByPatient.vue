@@ -3,7 +3,7 @@ import {ref, reactive, onMounted, computed} from 'vue'
 import VueDatepicker from '@vuepic/vue-datepicker'
 import '@vuepic/vue-datepicker/dist/main.css'
 import {common} from '@/util/common.js'
-import { patientMethods } from '@/util/reservation.js'
+import { patientMethods } from '@/reservation/util/reservation.js'
 import {omit} from 'lodash'
 import dayjs from "dayjs";
 import {errorMessage} from "@/util/errorMessage.js";

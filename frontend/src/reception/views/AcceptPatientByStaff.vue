@@ -1,7 +1,7 @@
 <script setup>
 import {onMounted, reactive, ref} from "vue";
 import {common} from "@/util/common.js";
-import {patientMethods} from "@/util/reservation.js";
+import {patientMethods} from "@/reservation/util/reservation.js";
 import {customFetch} from "@/util/customFetch.js";
 import {ENDPOINTS} from "@/util/endpoints.js";
 import {omit} from "lodash";

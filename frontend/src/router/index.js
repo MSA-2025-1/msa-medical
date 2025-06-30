@@ -9,9 +9,9 @@ import {receptionRoutes} from "@/router/receptionRoutes.js";
 const HomeView = () => import('@/views/HomeView.vue');
 const MainView = () => import('@/views/home/MainView.vue');
 const OtherView = () => import('@/views/other/OtherView.vue');
-const RegReservationByPatient = () => import('@/views/reservation/RegReservationByPatient.vue')
+const RegReservationByPatient = () => import('@/reservation/views/RegReservationByPatient.vue')
 const LoginView = () => import('@/views/auth/LoginView.vue');
-const Reception = () => import('@/views/reception/WaitingList.vue')
+const Reception = () => import('@/reception/views/WaitingList.vue')
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),

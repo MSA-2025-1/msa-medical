@@ -1,6 +1,6 @@
 import {defineStore} from "pinia";
 import {computed, ref} from "vue";
-import {reception} from "@/util/reception.js";
+import {reception} from "@/reception/util/reception.js";
 import {errorMessage} from "@/util/errorMessage.js";
 import {common} from "@/util/common.js";
 import {useUserStore} from "@/stores/userStore.js";
