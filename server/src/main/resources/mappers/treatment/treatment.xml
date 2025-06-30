@@ -11,12 +11,21 @@
     VALUES (#{patientUuid}, #{doctorUuid}, 'S002',#{treatContent})
   </insert>
   
-  <select id ="getHistory" parameterType="com.emr.slgi.treatment.Treatment" resultType="com.emr.slgi.treatment.Treatment">
+  <select id ="getHistory" parameterType="map" resultType="com.emr.slgi.treatment.Treatment">
   	select treat_write_date,id
 	from tb_treatment
 	where  doctor_uuid = #{doctorUuid} and patient_uuid = #{patientUuid}
-	order by treat_write_date desc ;
+	order by treat_write_date desc
+	limit #{start}, #{size}
   </select>
+  
+  
+  <select id="getHistoryCount" parameterType="map" resultType="int">
+	  SELECT COUNT(*)
+	  FROM tb_treatment
+	  WHERE doctor_uuid = #{doctorUuid}
+	    AND patient_uuid = #{patientUuid}
+</select>
   
   <select id ="selectTreatment" resultType="com.emr.slgi.treatment.Treatment">
   	select *

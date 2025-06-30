@@ -11,6 +11,9 @@ import com.emr.slgi.attachment.AttachmentDAO;
 import com.emr.slgi.attachment.AttachmentService;
 import com.emr.slgi.diagnosis.Diagnosis;
 import com.emr.slgi.diagnosis.DiagnosisDAO;
+import com.emr.slgi.page.PageDTO;
+import com.emr.slgi.page.TreatmentHitoryRequestDTO;
+import com.emr.slgi.page.PageResponseDTO;
 import com.emr.slgi.prescription.Prescription;
 import com.emr.slgi.prescription.PrescriptionDAO;
 
@@ -57,10 +60,12 @@ public class TreatmentService {
 		}
 	}
 
-	public List<Treatment> getHistory(Treatment treatment) {
-		return treatmentDAO.getHistory(treatment);
+	public PageResponseDTO<Treatment> getHistory(TreatmentHitoryRequestDTO treatmentHitoryRequestDTO) {
+		int totalCount = treatmentDAO.getHistoryCount(treatmentHitoryRequestDTO);
+		List<Treatment> list = treatmentDAO.getHistory(treatmentHitoryRequestDTO);
+		PageDTO pageDTO = new PageDTO(totalCount, treatmentHitoryRequestDTO.getPageNo(),treatmentHitoryRequestDTO.getSize());
+		return new PageResponseDTO<Treatment>(pageDTO, list);
 	}
-	
 	
 	public TotalTreatmentDTO getTotalDetail(int id) {
 		Treatment treatment = treatmentDAO.selectTreatment(id);

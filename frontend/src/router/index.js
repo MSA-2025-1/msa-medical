@@ -54,13 +54,6 @@ const router = createRouter({
       name : 'chatroom',
       component:ChatRoom
     },
-
-
-    {
-      path: '/medicalTreatment',
-      name : 'medicalTreatment',
-      component:MedicalTreatment
-    },
     {
       path: '/acceptPatientByStaff',
       name: 'acceptPatientByStaff',
@@ -73,7 +66,13 @@ const router = createRouter({
       children: [
           ...receptionRoutes
       ]
-    }
+    },
+    {
+      path: '/medicalTreatment',
+      name : 'medicalTreatment',
+      component:MedicalTreatment
+    },
+
   ],
 })
 

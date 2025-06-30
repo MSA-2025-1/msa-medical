@@ -156,7 +156,7 @@ export const ENDPOINTS = {
             url:`/treatment/totalTreatment`
         },
         history: {
-            method:'post',
+            method:'get',
             url:`/treatment/history`
         },
         historyDetail:(id) => ({

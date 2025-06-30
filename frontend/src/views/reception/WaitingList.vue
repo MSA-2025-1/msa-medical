@@ -1,7 +1,6 @@
 <script setup>
   import {useWaitingListStore} from "@/stores/waitingListStore.js";
   import {onBeforeMount, onMounted, onUnmounted, ref} from "vue";
-  import WaitingListPerDoctor from "@/views/reception/WaitingListPerDoctor.vue";
   import WaitingListDoctorName from "@/views/reception/WaitingListDoctorName.vue";
   import WaitingListPatientList from "@/views/reception/WaitingListPatientList.vue";
 

@@ -1,19 +1,20 @@
 package com.emr.slgi.treatment;
 
-import java.util.List;
 import java.util.Map;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
+
+import com.emr.slgi.page.TreatmentHitoryRequestDTO;
 
 import lombok.RequiredArgsConstructor;
 
@@ -36,13 +37,9 @@ public class TreatmentController {
 		return ResponseEntity.ok().build();
 	}
 	
-	@PostMapping("/history")
-	public ResponseEntity<Object> history(@RequestBody Treatment treatment){
-		if(treatment.getPatientUuid() == null || treatment.getPatientUuid().isEmpty()) {
-			throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"환자 이름이 없습니다.");
-		}
-		List<Treatment> historyList =  treatmentService.getHistory(treatment);
-		return ResponseEntity.ok(Map.of("list",historyList));
+	@GetMapping("/history")
+	public ResponseEntity<Object> history(@ModelAttribute TreatmentHitoryRequestDTO treatmentHitoryRequestDTO){
+		return ResponseEntity.ok(treatmentService.getHistory(treatmentHitoryRequestDTO));
 	}
 	
 	@GetMapping("/historyDetail/{id}")
