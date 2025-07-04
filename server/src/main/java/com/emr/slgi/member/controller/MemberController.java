@@ -19,6 +19,7 @@ public class MemberController {
 
   @GetMapping("/me")
   public ResponseEntity<?> me(@AuthenticationPrincipal String uuid) {
+    // TODO: 추후 컬럼 축소
     return ResponseEntity.ok(memberService.getByUuid(uuid));
   }
 

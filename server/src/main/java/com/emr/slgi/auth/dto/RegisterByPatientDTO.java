@@ -8,16 +8,17 @@ import lombok.Data;
 @Data
 public class RegisterByPatientDTO {
     @NotBlank
-    @Size(min = 5, max = 20)
+    @Size(min = 4, max = 20)
     @Pattern(regexp = RegexPatterns.USERID)
     private String userid;
 
     @NotBlank
-    @Size(min = 8, max = 20)
+    @Size(min = 4, max = 20)
     @Pattern(regexp = RegexPatterns.PASSWORD)
     private String password;
 
     @NotBlank
+    @Size(max = 20)
     private String name;
 
     @NotBlank

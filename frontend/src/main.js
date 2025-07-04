@@ -16,7 +16,10 @@ const pinia = createPinia()
 pinia.use(piniaPersistedstate)
 
 app.use(pinia)
-await getMe();
+try {
+  await getMe();
+} catch (err) {
+}
 
 app.use(router)
 

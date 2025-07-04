@@ -19,6 +19,7 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class RefreshTokenService {
+    // TODO: appendonly 설정 알아보기
 
     private final JwtUtil jwtUtil;
     private final StringRedisTemplate stringRedisTemplate;

@@ -34,6 +34,7 @@ const processQueue = (error) => {
 };
 
 instance.interceptors.response.use(
+  // TODO: originalRequest의 _retry를 심볼로 처리
   response => response,
   async error => {
     const originalRequest = error.config;
@@ -58,6 +59,7 @@ instance.interceptors.response.use(
         if (!refreshToken) {
           return Promise.reject(error);
         }
+        // TODO: 이 때 401을 받았을 경우에 무한 루프가 발생되는지 확인
         const res = await customFetch(ENDPOINTS.auth.refreshToken, {
           data: { refreshToken }
         });

@@ -11,3 +11,7 @@ export function setRefreshToken(refreshToken) {
 export function removeRefreshToken() {
   localStorage.removeItem(REFRESH_TOKEN_KEY);
 }
+
+export async function renewAccessToken() {
+  
+}
