@@ -52,6 +52,11 @@ const router = useRouter();
 
 let validId = "";
 
+const USERID_REGEX = /^[A-Za-z0-9_]+$/;
+const PASSWORD_REGEX = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]+$/;
+const PHONE_REGEX = /^(?:0\d{1,2}-)?\d{3,4}-\\d{4}$/;
+const RRN_REGEX = /^\d{6}-\d{7}$/;
+
 const member = reactive({
   userid: '',
   password: '',
@@ -117,8 +122,13 @@ async function checkIdDuplicate() {
 function checkIdValidity() {
   touched.userid = true;
 
-  if (member.userid.length === 0) {
-    invalidity.userid = "아이디를 입력해주세요.";
+  if (!USERID_REGEX.test(member.userid)) {
+    invalidity.userid = "아이디는 영문, 숫자, 밑줄(_)로만 구성해주세요.";
+    return;
+  }
+
+  if (member.userid.length < 5 || member.userid.length > 20) {
+    invalidity.userid = "아이디 길이는 5~20자입니다.";
     return;
   }
 
@@ -133,8 +143,13 @@ function checkIdValidity() {
 function checkPasswordValidity() {
   touched.password = true;
 
-  if (member.password.length === 0) {
-    invalidity.password = "비밀번호를 입력해주세요.";
+  if (!PASSWORD_REGEX.test(member.password)) {
+    invalidity.password = "비밀번호는 대문자, 소문자, 숫자, 특수문자(@$!%*?&)를 포함해주세요.";
+    return;
+  }
+
+  if (member.password.length < 5 || member.password.length > 20) {
+    invalidity.password = "비밀번호 길이는 5~20자입니다.";
     return;
   }
 
@@ -160,8 +175,8 @@ function checkPasswordCheckValidity() {
 function checkNameValidity() {
   touched.name = true;
 
-  if (member.name.length === 0) {
-    invalidity.name = "이름을 입력해주세요.";
+  if (member.name.length < 1 || member.name.length > 20) {
+    invalidity.name = "이름 길이는 1~20자입니다.";
     return;
   }
 
@@ -171,8 +186,8 @@ function checkNameValidity() {
 function checkRrnValidity() {
   touched.rrn = true;
 
-  if (member.rrn.length === 0) {
-    invalidity.rrn = "주민번호를 입력해주세요.";
+  if (!RRN_REGEX.test(member.rrn)) {
+    invalidity.rrn = "주민번호는 하이픈(-)을 포함하여 입력해주세요.";
     return;
   }
 
@@ -182,8 +197,8 @@ function checkRrnValidity() {
 function checkPhoneValidity() {
   touched.phone = true;
 
-  if (member.phone.length === 0) {
-    invalidity.phone = "전화번호를 입력해주세요.";
+  if (!PHONE_REGEX.test(member.phone)) {
+    invalidity.phone = "전화번호는 하이픈(-)을 포함하여 입력해주세요.";
     return;
   }
 
