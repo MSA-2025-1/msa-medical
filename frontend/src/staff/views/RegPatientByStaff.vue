@@ -6,77 +6,78 @@ import { REGEX_PATTERN as RegexPattern } from "@/util/RegexPattern.js";
 import { StaffMessage } from "@/staff/util/StaffMessage.js";
 import { ENDPOINTS } from "@/util/endpoints.js";
 import { customFetch } from "@/util/customFetch.js";
+import {number} from "sockjs-client/lib/utils/random.js";
 
-const inputData = reactive({
-  name: '',
-  rrn: '',
-  phone: ''
-});
-
-const rrnNo = reactive({
-  rrnFront: '',
-  rrnBack: ''
-});
-
-const rrnFrontInput = ref();
-const rrnBackInput = ref();
-const router = useRouter();
-
-const rrnValid = computed(() => {
-  const { rrnFront, rrnBack } = common.Validate({
-    rrnFront: { regex: RegexPattern.RRN_FRONT, values: [rrnNo.rrnFront] },
-    rrnBack: { regex: RegexPattern.RRN_BACK, values: [rrnNo.rrnBack] }
+  const inputData = reactive({
+    name: '',
+    rrn: '',
+    phone: ''
   });
-  return rrnFront.includes(true) && rrnBack.includes(true);
-});
 
-const phoneValid = computed(() => {
-  const { phone } = common.Validate({
-    phone: { regex: RegexPattern.PHONE, values: [inputData.phone] }
+  const rrnNo = reactive({
+    rrnFront: '',
+    rrnBack: ''
   });
-  return phone.includes(true);
-});
 
-const fullRrn = computed(() => {
-  return rrnValid.value ? `${rrnNo.rrnFront}-${rrnNo.rrnBack}` : '';
-});
+  const rrnFrontInput = ref();
+  const rrnBackInput = ref();
+  const router = useRouter();
 
-const touched = reactive({
-  rrn: false,
-  phone: false
-});
+  const rrnValid = computed(() => {
+    const { rrnFront, rrnBack } = common.Validate({
+      rrnFront: { regex: RegexPattern.RRN_FRONT, values: [rrnNo.rrnFront] },
+      rrnBack: { regex: RegexPattern.RRN_BACK, values: [rrnNo.rrnBack] }
+    });
+    return rrnFront.includes(true) && rrnBack.includes(true);
+  });
 
-const handleRrnFrontInput = (e) => {
-  touched.rrn = true;
-  rrnNo.rrnFront = e.target.value.replace(/\D/g, '');
-};
+  const phoneValid = computed(() => {
+    const { phone } = common.Validate({
+      phone: { regex: RegexPattern.PHONE, values: [inputData.phone] }
+    });
+    return phone.includes(true);
+  });
 
-const handleRrnBackInput = (e) => {
-  touched.rrn = true;
-  rrnNo.rrnBack = e.target.value.replace(/\D/g, '');
-};
+  const fullRrn = computed(() => {
+    return rrnValid.value ? `${rrnNo.rrnFront}-${rrnNo.rrnBack}` : '';
+  });
 
-watch(fullRrn, (newVal) => {
-  inputData.rrn = newVal;
-});
+  const touched = reactive({
+    rrn: false,
+    phone: false
+  });
 
-watch(() => rrnNo.rrnFront, (newVal) => {
-  if (newVal.length === 6) rrnBackInput.value?.focus();
-});
+  const handleRrnFrontInput = (e) => {
+    touched.rrn = true;
+    rrnNo.rrnFront = e.target.value.replace(/\D/g, '');
+  };
 
-const registerPatientByStaff = async () => {
-  if (inputData.name.length < 1 || inputData.name.length > 6) {
-    common.alert(StaffMessage.ERROR.NAME_NOT_VALID);
-    return;
-  }
-  if (!rrnValid.value) {
-    common.alert(StaffMessage.ERROR.RRN_NOT_VALID);
-    return;
-  }
-  if (!phoneValid.value) {
-    common.alert(StaffMessage.ERROR.PHONE_NOT_VALID);
-    return;
-  }
+  const handleRrnBackInput = (e) => {
+    touched.rrn = true;
+    rrnNo.rrnBack = e.target.value.replace(/\D/g, '');
+  };
+
+  watch(fullRrn, (newVal) => {
+    inputData.rrn = newVal;
+  });
+
+  watch(() => rrnNo.rrnFront, (newVal) => {
+    if (newVal.length === 6) rrnBackInput.value?.focus();
+  });
+
+  const registerPatientByStaff = async () => {
+    if (inputData.name.length < 1 || inputData.name.length > 6) {
+      common.alert(StaffMessage.ERROR.NAME_NOT_VALID);
+      return;
+    }
+    if (!rrnValid.value) {
+      common.alert(StaffMessage.ERROR.RRN_NOT_VALID);
+      return;
+    }
+    if (!phoneValid.value) {
+      common.alert(StaffMessage.ERROR.PHONE_NOT_VALID);
+      return;
+    }
 
   try {
     const response = await customFetch(ENDPOINTS.staff.register, {
