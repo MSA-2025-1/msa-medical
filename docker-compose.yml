@@ -2,27 +2,32 @@ version: "3"
 services:
 
   mariadb:
-    build:
-      context: ./mariadb
+    image: ${MARIA_DB_IMAGE}
+    container_name: slgi-emr-mariadb
     environment:
-      MARIADB_ROOT_PASSWORD: 1004
-      MARIADB_DATABASE: slgi_emr_db
+      MARIADB_ROOT_PASSWORD: ${MARIADB_ROOT_PASSWORD}
+      MARIADB_DATABASE: ${MARIA_DB_DATABASE}
     volumes:
+      - ./mariadb/sql:/docker-entrypoint-initdb.d/
       - ./mariadb/data:/var/lib/mysql
 
   redis:
-    build:
-      context: ./redis
+    image: ${REDIS_IMAGE}
+    container_name: slgi-emr-redis
+    volumes:
+      - ./redis/redis.conf /etc/redis/redis.conf
+    command: ["redis-server", "/etc/redis/redis.conf"]
 
   backend:
-    build:
-      context: ./server
+    image: ${JAVA_VERSION}
+    workdir: /app
+    entrypoint: ["java", "-jar", "/app/app.jar"]
     environment:
-      SPRING_DATA_REDIS_HOST: redis
-      SPRING_DATA_REDIS_PASSWORD: 1004
-      SPRING_DATASOURCE_URL: jdbc:mariadb://mariadb:3306/slgi_emr_db?useSSL=false
-      SPRING_DATASOURCE_USER: root
-      SPRING_DATASOURCE_PASSWORD: 1004
+      SPRING_DATA_REDIS_HOST: ${SPRING_DATA_REDIS_HOST}
+      SPRING_DATA_REDIS_PASSWORD: ${SPRING_DATA_REDIS_PASSWORD}
+      SPRING_DATASOURCE_URL: ${SPRING_DATASOURCE_URL}
+      SPRING_DATASOURCE_USER: ${SPRING_DATASOURCE_USER}
+      SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
     volumes:
       - ./server/build/libs/server-0.0.1-SNAPSHOT.jar:/app/app.jar
     depends_on:
@@ -30,11 +35,13 @@ services:
       - mariadb
 
   frontend:
-    build:
-      context: ./frontend
+    image: ${NGINX_IMAGE}
     ports:
-      - "80:80"
+      - ${FRONTEND_PORT}
     depends_on:
       - backend
     volumes:
       - ./frontend/dist:/usr/share/nginx/html
+      - ./frontend/nginx.conf /etc/nginx/nginx.conf
+    command: ["nginx", "-g", "daemon off;"]
+
