@@ -2,10 +2,6 @@
 import '@/css/staff/StaffMenuBar.css'
 import LogoutButton from "@/auth/components/LogoutButton.vue";
 
-  const push = () => {
-
-  }
-
 </script>
 
 <template>

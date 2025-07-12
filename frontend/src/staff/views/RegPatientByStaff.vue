@@ -97,6 +97,7 @@ const cancel = () => {
 };
 </script>
 
+
 <template>
   <div class="container py-4">
     <h3>환자 등록</h3>
