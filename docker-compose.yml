@@ -4,6 +4,8 @@ services:
   mariadb:
     build:
       context: ./mariadb
+    ports:
+      - "3308:3306"
     environment:
       MARIADB_ROOT_PASSWORD: 1004
       MARIADB_DATABASE: slgi_emr_db

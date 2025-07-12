@@ -18,7 +18,10 @@ instance.interceptors.request.use(
   error => Promise.reject(error)
 );
 
+let hasRedirected = false;
+
 instance.interceptors.response.use(
+  // TODO: originalRequest의 _retry를 심볼로 처리
   response => response,
   async error => {
     const originalRequest = error.config;

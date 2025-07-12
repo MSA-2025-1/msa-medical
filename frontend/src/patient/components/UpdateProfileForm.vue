@@ -2,16 +2,16 @@
   <div class="card p-4 w-100" style="max-width: 720px;">
     <form>
       <div class="mb-3">
-        <label class="form-label">아이디</label>
+        <Label class="form-label">아이디</Label>
         <input type="text" :value="member.userid" class="form-control" disabled>
       </div>
       <div class="mb-3">
-        <label for="name" class="form-label">이름</label>
-        <input type="text" v-model="member.name" class="form-control" id="name">
+        <Label for="name" class="form-label">이름</Label>
+        <Input v-model="member.name" id="name" />
       </div>
       <div class="mb-3">
-        <label for="phone" class="form-label">전화번호</label>
-        <input type="text" v-model="member.phone" class="form-control" id="phone">
+        <Label for="phone" class="form-label">전화번호</Label>
+        <Input v-model="member.phone" id="phone" />
       </div>
     </form>
     <div class="d-flex justify-content-end gap-2">
@@ -22,6 +22,8 @@
 </template>
 
 <script setup>
+import Input from '@/common/components/Input.vue';
+import Label from '@/common/components/Label.vue';
 import { customFetch } from '@/util/customFetch';
 import { ENDPOINTS } from '@/util/endpoints';
 import { pick } from 'lodash';
