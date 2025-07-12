@@ -1,0 +1,63 @@
+name: SlgiEMR
+on: 
+  push: # 동작시 어떤 것을 가지고 동작할 것인가
+    branches: [main]
+env: # 환경 설정 변수
+  REPOSITORY_NAME: msa-medical
+  
+jobs:
+    
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 깃 클론
+        uses: actions/checkout@v3
+
+      - name: 자바 17 설치
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Gradle 권한 설정
+        run: chmod +x gradlew
+
+      - name: Server 빌드
+        run: |
+          cd server
+          ./gradlew bootJar
+
+      - name: Frontend 빌드
+        run: |
+          cd frontend
+          npm install
+          npm run build
+
+      - name: EC2에서 DockerHub에 로그인
+        uses: docker/login-action@v1
+        with:
+          username: ${{secrets.USERNAME}} # 변수명은 팀장님이 알아서 수정하기.
+          password: ${{secrets.PASSWORD}} # 변수명은 팀장님이 알아서 수정하기.
+
+      - name: DockerHub에 Push
+        run: docker push SlgiEMR
+
+  deploy:
+    needs: build
+    name: EC2에 배포
+    runs-on: [] # AWS와 연동한 Runner 적기. 권한없어서 팀장님이 생성해야함.
+    steps:
+      - name: 운영서버에서 DockerHub에 로그인
+        uses: docker/login-action@v1
+        with:
+          username: ${{secrets.USERNAME}} # 변수명은 팀장님이 알아서 수정하기.
+          password: ${{secrets.PASSWORD}} # 변수명은 팀장님이 알아서 수정하기.
+          
+      - name: Docker Hub에서 다운로드
+        run: docker-compose pull
+      
+      - name: docker-compose 재실행
+        run: |
+          docker-compose down
+          docker-compose up -d
+  
