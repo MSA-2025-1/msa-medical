@@ -6,7 +6,7 @@ services:
     container_name: slgi-emr-mariadb
     environment:
       MARIADB_ROOT_PASSWORD: ${MARIADB_ROOT_PASSWORD}
-      MARIADB_DATABASE: ${MARIA_DB_DATABASE}
+      MARIADB_DATABASE: ${MARIADB_DATABASE}
     volumes:
       - ./mariadb/sql:/docker-entrypoint-initdb.d/
       - ./mariadb/data:/var/lib/mysql
@@ -15,12 +15,12 @@ services:
     image: ${REDIS_IMAGE}
     container_name: slgi-emr-redis
     volumes:
-      - ./redis/redis.conf /etc/redis/redis.conf
+      - ./redis/redis.conf:/etc/redis/redis.conf
     command: ["redis-server", "/etc/redis/redis.conf"]
 
   backend:
-    image: ${JAVA_VERSION}
-    workdir: /app
+    image: ${JAVA_IMAGE}
+    container_name: slgi-emr-backend
     entrypoint: ["java", "-jar", "/app/app.jar"]
     environment:
       SPRING_DATA_REDIS_HOST: ${SPRING_DATA_REDIS_HOST}
@@ -36,12 +36,13 @@ services:
 
   frontend:
     image: ${NGINX_IMAGE}
+    container_name: slgi-emr-frontend
     ports:
       - ${FRONTEND_PORT}
     depends_on:
       - backend
     volumes:
       - ./frontend/dist:/usr/share/nginx/html
-      - ./frontend/nginx.conf /etc/nginx/nginx.conf
+      - ./frontend/nginx.conf:/etc/nginx/nginx.conf
     command: ["nginx", "-g", "daemon off;"]
 
