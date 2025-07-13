@@ -62,11 +62,27 @@ jobs:
         with:
           username: ${{secrets.USERNAME}} 
           password: ${{secrets.PASSWORD}} 
+
+
+      - name: .env 파일 생성
+        run: |
+          cd ${{ github.workspace }}
+          cat <<EOF > .env
+          MARIA_DB_IMAGE=${{ vars.MARIA_DB_IMAGE }}
+          MARIADB_ROOT_PASSWORD=${{ secrets.MARIADB_ROOT_PASSWORD }}
+          MARIADB_DATABASE=${{ vars.MARIADB_DATABASE }}
+          REDIS_IMAGE=${{ vars.REDIS_IMAGE }}
+          SPRING_DATA_REDIS_HOST=${{ vars.SPRING_DATA_REDIS_HOST }}
+          SPRING_DATA_REDIS_PASSWORD=${{ secrets.SPRING_DATA_REDIS_PASSWORD }}
+          SPRING_DATASOURCE_URL=${{ vars.SPRING_DATASOURCE_URL }}
+          SPRING_DATASOURCE_USER=${{ vars.SPRING_DATASOURCE_USER }}
+          SPRING_DATASOURCE_PASSWORD=${{ secrets.SPRING_DATASOURCE_PASSWORD }}
+          FRONTEND_PORT=${{ vars.FRONTEND_PORT }}
+          EOF
       
       - name: docker 이미지 풀 및 재실행
         run: |
-          cd ${{ github.workspace }}
-          ls -al              
+          cd ${{ github.workspace }}         
           docker compose pull
           docker compose down
           docker compose up -d
