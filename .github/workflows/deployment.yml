@@ -58,9 +58,6 @@ jobs:
         with:
           username: ${{secrets.USERNAME}} 
           password: ${{secrets.PASSWORD}} 
-          
-      - name: Docker Hub에서 다운로드
-        run: docker compose pull
       
       - name: docker compose 재실행
         run: |
