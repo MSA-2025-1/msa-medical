@@ -20,10 +20,6 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      - name: Gradle 권한 설정
-        run: |
-
-
       - name: Server 빌드
         run: |
           cd server
@@ -42,8 +38,15 @@ jobs:
           username: ${{secrets.USERNAME}} 
           password: ${{secrets.PASSWORD}} 
 
-      - name: DockerHub에 Push
-        run: docker push SlgiEMR
+      - name: 백엔드 이미지 빌드 및 푸시
+        run: |
+          docker build -t ${{secrets.USERNAME}}/SlgiEMRBackend ./server
+          docker push ${{secrets.USERNAME}}/SlgiEMRBackend
+
+      - name: 프론트엔드 이미지 빌드 및 푸시
+        run: |
+          docker build -t ${{secrets.USERNAME}}/SlgiEMRFrontend ./frontend
+          docker push ${{secrets.USERNAME}}/SlgiEMRFrontend
 
   deploy:
     needs: build
