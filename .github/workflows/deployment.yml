@@ -60,10 +60,10 @@ jobs:
           password: ${{secrets.PASSWORD}} 
           
       - name: Docker Hub에서 다운로드
-        run: docker-compose pull
+        run: docker compose pull
       
-      - name: docker-compose 재실행
+      - name: docker compose 재실행
         run: |
-          docker-compose down
-          docker-compose up -d
+          docker compose down
+          docker compose up -d
   
