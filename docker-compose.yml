@@ -21,7 +21,7 @@ services:
   backend:
     build:
       context: ./server
-    image: seungju0104/SlgiEMRBackend
+    image: seungju0104/slgi-emr-backend
     environment:
       SPRING_DATA_REDIS_HOST: ${SPRING_DATA_REDIS_HOST}
       SPRING_DATA_REDIS_PASSWORD: ${SPRING_DATA_REDIS_PASSWORD}
@@ -35,7 +35,7 @@ services:
   frontend:
     build: 
       context: ./frontend
-    image: seungju0104/SlgiEMRFrontend
+    image: seungju0104/slgi-emr-frontend
     ports:
       - ${FRONTEND_PORT}
     depends_on:
