@@ -24,7 +24,9 @@ jobs:
          node-version: '20.x'
          
       - name: 의존성 추가
-        run: npm install
+        run: |
+          cd ${{ github.workspace }}/frontend
+          npm install
 
       - name: Server 빌드
         run: |
