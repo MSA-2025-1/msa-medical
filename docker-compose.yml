@@ -19,9 +19,9 @@ services:
     command: ["redis-server", "/etc/redis/redis.conf"]
 
   backend:
-    context: ./server
-    dockerfile: Dockerfile
-    container_name: slgi-emr-backend
+    build:
+      context: ./server
+    image: seungju0104/SlgiEMRBackend
     environment:
       SPRING_DATA_REDIS_HOST: ${SPRING_DATA_REDIS_HOST}
       SPRING_DATA_REDIS_PASSWORD: ${SPRING_DATA_REDIS_PASSWORD}
@@ -35,8 +35,7 @@ services:
   frontend:
     build: 
       context: ./frontend
-      dockerfile: Dockerfile
-    container_name: slgi-emr-frontend
+    image: seungju0104/SlgiEMRFrontend
     ports:
       - ${FRONTEND_PORT}
     depends_on:
