@@ -21,12 +21,12 @@ jobs:
           distribution: 'temurin'
 
       - name: Gradle 권한 설정
-        # chmod +x gradlew
         run: |
           cd server
+          chmod +x gradlew
 
       - name: Server 빌드
-        run: gradlew build
+        run: ./gradlew bootJar
 
       - name: Frontend 빌드
         run: |
