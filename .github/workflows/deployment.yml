@@ -2,6 +2,7 @@ name: SlgiEMR
 on: 
   push: # 동작시 어떤 것을 가지고 동작할 것인가
     branches: [git-action]
+  workflow_dispatch:
 env: # 환경 설정 변수
   REPOSITORY_NAME: msa-medical
   
