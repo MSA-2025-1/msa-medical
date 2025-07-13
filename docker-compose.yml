@@ -2,17 +2,17 @@ version: "3"
 services:
 
   mariadb:
-    image: ${{var.MARIA_DB_IMAGE}}
+    image: ${MARIA_DB_IMAGE}
     container_name: slgi-emr-mariadb
     environment:
-      MARIADB_ROOT_PASSWORD: ${{secrets.MARIADB_ROOT_PASSWORD}}
-      MARIADB_DATABASE: ${{var.MARIADB_DATABASE}}
+      MARIADB_ROOT_PASSWORD: ${MARIADB_ROOT_PASSWORD}
+      MARIADB_DATABASE: ${MARIADB_DATABASE}
     volumes:
       - ./mariadb/sql:/docker-entrypoint-initdb.d/
       - ./mariadb/data:/var/lib/mysql
 
   redis:
-    image: ${{var.REDIS_IMAGE}}
+    image: ${REDIS_IMAGE}
     container_name: slgi-emr-redis
     volumes:
       - ./redis/redis.conf:/etc/redis/redis.conf
@@ -21,13 +21,13 @@ services:
   backend:
     build:
       context: ./server
-    image: ${{secrets.USERNAME}}/slgi-emr-backend
+    image: ${USERNAME}/slgi-emr-backend
     environment:
-      SPRING_DATA_REDIS_HOST: ${{var.SPRING_DATA_REDIS_HOST}}
-      SPRING_DATA_REDIS_PASSWORD: ${{secretsSPRING_DATA_REDIS_PASSWORD}}
-      SPRING_DATASOURCE_URL: ${{var.SPRING_DATASOURCE_URL}}
-      SPRING_DATASOURCE_USER: ${{secrets.SPRING_DATASOURCE_USER}}
-      SPRING_DATASOURCE_PASSWORD: ${{secrets.SPRING_DATASOURCE_PASSWORD}}
+      SPRING_DATA_REDIS_HOST: ${SPRING_DATA_REDIS_HOST}
+      SPRING_DATA_REDIS_PASSWORD: ${SPRING_DATA_REDIS_PASSWORD}
+      SPRING_DATASOURCE_URL: ${SPRING_DATASOURCE_URL}
+      SPRING_DATASOURCE_USER: ${SPRING_DATASOURCE_USER}
+      SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
     depends_on:
       - redis
       - mariadb
@@ -35,9 +35,9 @@ services:
   frontend:
     build: 
       context: ./frontend
-    image: ${{secrets.USERNAME}}/slgi-emr-frontend
+    image: ${USERNAME}/slgi-emr-frontend
     ports:
-      - ${{var.FRONTEND_PORT}}
+      - ${FRONTEND_PORT}
     depends_on:
       - backend
 
