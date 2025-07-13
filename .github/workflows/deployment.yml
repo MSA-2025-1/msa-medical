@@ -40,13 +40,13 @@ jobs:
 
       - name: 백엔드 이미지 빌드 및 푸시
         run: |
-          docker build -t ${{secrets.USERNAME}}/SlgiEMRBackend ./server
-          docker push ${{secrets.USERNAME}}/SlgiEMRBackend
+          docker build -t ${{secrets.USERNAME}}/slgi-emr-backend ./server
+          docker push ${{secrets.USERNAME}}/slgi-emr-backend
 
       - name: 프론트엔드 이미지 빌드 및 푸시
         run: |
-          docker build -t ${{secrets.USERNAME}}/SlgiEMRFrontend ./frontend
-          docker push ${{secrets.USERNAME}}/SlgiEMRFrontend
+          docker build -t ${{secrets.USERNAME}}/slgi-emr-frontend ./frontend
+          docker push ${{secrets.USERNAME}}/slgi-emr-frontend
 
   deploy:
     needs: build
