@@ -63,6 +63,8 @@ jobs:
     environment: msa-medical
     
     steps:
+      - name: 변경권한 설정
+        run: sudo chown -R ubuntu:ubuntu /home/ubuntu/actions-runner/_work/msa-medical/msa-medical/mariadb/data
 
       - name: GitHub 리포지토리 체크아웃
         uses: actions/checkout@v3
