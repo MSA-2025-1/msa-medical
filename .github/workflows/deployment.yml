@@ -7,7 +7,7 @@ on:
 jobs:
     
   build:
-    runs-on: [self-hosted, slgi-emr]
+    runs-on: [ubuntu-latest]
     steps:
       - name: 깃 클론
         uses: actions/checkout@v3
