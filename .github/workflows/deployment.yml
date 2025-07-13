@@ -78,6 +78,7 @@ jobs:
           SPRING_DATASOURCE_USER=${{ vars.SPRING_DATASOURCE_USER }}
           SPRING_DATASOURCE_PASSWORD=${{ secrets.SPRING_DATASOURCE_PASSWORD }}
           FRONTEND_PORT=${{ vars.FRONTEND_PORT }}
+          USERNAME=${{secrets.USERNAME}}
           EOF
       
       - name: docker 이미지 풀 및 재실행
