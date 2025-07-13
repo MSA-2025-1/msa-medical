@@ -59,9 +59,9 @@ jobs:
           username: ${{secrets.USERNAME}} 
           password: ${{secrets.PASSWORD}} 
       
-      - name: docker compose 재실행
+      - name: docker 이미지 풀 및 재실행
         run: |
-          cd ~/msa-medical
+          cd ${{ github.workspace }} 
           docker compose pull
           docker compose down
           docker compose up -d
