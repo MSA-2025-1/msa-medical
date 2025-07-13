@@ -64,6 +64,8 @@ jobs:
       
       - name: docker compose 재실행
         run: |
+          cd ~/msa-medical
+          docker compose pull
           docker compose down
           docker compose up -d
   
