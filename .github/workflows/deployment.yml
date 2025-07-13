@@ -9,7 +9,7 @@ env: # 환경 설정 변수
 jobs:
     
   build:
-    runs-on: [self-hosted, slgi-EMR_deployment]
+    runs-on: [self-hosted, slgi-EMR-deployment]
     steps:
       - name: 깃 클론
         uses: actions/checkout@v3
@@ -46,7 +46,7 @@ jobs:
   deploy:
     needs: build
     name: EC2에 배포
-    runs-on: [self-hosted, slgi-EMR_deployment] 
+    runs-on: [self-hosted, slgi-EMR-deployment]
     steps:
       - name: 운영서버에서 DockerHub에 로그인
         uses: docker/login-action@v1
