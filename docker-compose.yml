@@ -19,30 +19,26 @@ services:
     command: ["redis-server", "/etc/redis/redis.conf"]
 
   backend:
-    image: ${JAVA_IMAGE}
+    context: ./server
+    dockerfile: Dockerfile
     container_name: slgi-emr-backend
-    entrypoint: ["java", "-jar", "/app/app.jar"]
     environment:
       SPRING_DATA_REDIS_HOST: ${SPRING_DATA_REDIS_HOST}
       SPRING_DATA_REDIS_PASSWORD: ${SPRING_DATA_REDIS_PASSWORD}
       SPRING_DATASOURCE_URL: ${SPRING_DATASOURCE_URL}
       SPRING_DATASOURCE_USER: ${SPRING_DATASOURCE_USER}
       SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
-    volumes:
-      - ./server/build/libs/server-0.0.1-SNAPSHOT.jar:/app/app.jar
     depends_on:
       - redis
       - mariadb
 
   frontend:
-    image: ${NGINX_IMAGE}
+    build: 
+      context: ./frontend
+      dockerfile: Dockerfile
     container_name: slgi-emr-frontend
     ports:
       - ${FRONTEND_PORT}
     depends_on:
       - backend
-    volumes:
-      - ./frontend/dist:/usr/share/nginx/html
-      - ./frontend/nginx.conf:/etc/nginx/nginx.conf
-    command: ["nginx", "-g", "daemon off;"]
 
