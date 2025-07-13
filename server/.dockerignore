@@ -1,6 +1,5 @@
 # Java
 target/
-build/
 *.log
 
 # OS/IDE 관련

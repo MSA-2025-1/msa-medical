@@ -1,13 +1,3 @@
-# Node.js
-node_modules
-npm-debug.log
-yarn.lock
-
-# Java
-target/
-build/
-*.log
-
 # OS/IDE 관련
 .DS_Store
 Thumbs.db
