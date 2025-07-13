@@ -52,7 +52,7 @@ jobs:
     needs: build
     name: EC2에 배포
     runs-on: [ubuntu-latest]
-    environment: msa-medcial
+    environment: msa-medical
     
     steps:
       # 테스트용. self-hosted로 수정 후 삭제할 수도
