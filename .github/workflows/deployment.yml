@@ -1,14 +1,14 @@
 name: SlgiEMR
 on: 
   push: # 동작시 어떤 것을 가지고 동작할 것인가
-    branches: [main]
+    branches: [git-action]
 env: # 환경 설정 변수
   REPOSITORY_NAME: msa-medical
   
 jobs:
     
   build:
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, slgi-EMR_deployment]
     steps:
       - name: 깃 클론
         uses: actions/checkout@v3
