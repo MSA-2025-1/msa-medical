@@ -2,14 +2,12 @@ name: SlgiEMR
 on: 
   push: # 동작시 어떤 것을 가지고 동작할 것인가
     branches: [git-action]
-  workflow_dispatch:
-#env: # 환경 설정 변수
-  #REPOSITORY_NAME: msa-medical
+  workflow_dispatch: #테스트용
   
 jobs:
     
   build:
-    runs-on: [ubuntu-latest]
+    runs-on: [self-hosted, slgi-emr]
     steps:
       - name: 깃 클론
         uses: actions/checkout@v3
@@ -51,11 +49,11 @@ jobs:
   deploy:
     needs: build
     name: EC2에 배포
-    runs-on: [ubuntu-latest]
+    runs-on: [self-hosted, slgi-emr]
     environment: msa-medical
     
     steps:
-      # 테스트용. self-hosted로 수정 후 삭제할 수도
+
       - name: GitHub 리포지토리 체크아웃
         uses: actions/checkout@v3
     
@@ -64,7 +62,6 @@ jobs:
         with:
           username: ${{secrets.USERNAME}} 
           password: ${{secrets.PASSWORD}} 
-
 
       - name: .env 파일 생성
         run: |
@@ -86,7 +83,6 @@ jobs:
       - name: .env 파일 내용 출력
         run: cat .env
 
-      
       - name: docker 이미지 풀 및 재실행
         run: |
           cd ${{ github.workspace }}         
