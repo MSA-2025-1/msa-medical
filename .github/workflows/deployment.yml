@@ -53,6 +53,10 @@ jobs:
     name: EC2에 배포
     runs-on: [ubuntu-latest]
     steps:
+      # 테스트용. self-hosted로 수정 후 삭제할 수도
+      - name: GitHub 리포지토리 체크아웃
+        uses: actions/checkout@v3
+    
       - name: 운영서버에서 DockerHub에 로그인
         uses: docker/login-action@v1
         with:
@@ -61,7 +65,8 @@ jobs:
       
       - name: docker 이미지 풀 및 재실행
         run: |
-          cd ${{ github.workspace }} 
+          cd ${{ github.workspace }}
+          ls -al              
           docker compose pull
           docker compose down
           docker compose up -d
