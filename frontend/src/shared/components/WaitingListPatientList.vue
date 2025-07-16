@@ -24,12 +24,6 @@ const onStatusChange = (patient, updateStatus) => {
 
 }
 
-const getPatientInfo = (patient) => {
-  emit('getPatientInfo', {patientUuid: patient.patientUuid,doctorUuid: patient.doctorUuid,});
-  selectedPatientUuid.value = patient.patientUuid
-  selectedDoctorUuid.value = patient.doctorUuid
-}
-
 </script>
 
 <template>
@@ -38,7 +32,7 @@ const getPatientInfo = (patient) => {
     <div class="my-3">
       <template v-for="patient in value" :key="patient.uuid">
         <div>
-          <button class="btn btn-primary" type="submit" @click="getPatientInfo(patient)" v-cloak>{{patient.name}}</button>
+          <button class="btn btn-primary" type="submit" v-cloak>{{patient.name}}</button>
           <span v-cloak v-if="patient.reservationDate">
             {{ dayjs(patient.reservationDate).format("MM-DD HH:mm") }}
           </span>

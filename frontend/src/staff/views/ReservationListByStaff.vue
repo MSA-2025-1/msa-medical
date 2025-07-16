@@ -71,11 +71,6 @@ const handleUpdateStatus = async ({uuid, updateStatus}) => {
 
 }
 
-// 의료진이 예약 리스트에서 이름을 누른 환자 UUID 가져오는 함수
-const getPatientInfo = ({uuid}) => {
-
-}
-
 const disabledWeekends = (date) => {
   return dayjs(date).toDate().getDay() === 0;
 };
@@ -150,7 +145,6 @@ onMounted(() => {
     <WaitingListDoctorName :value="list.doctor"/>
     <WaitingListPatientList
         @updateStatus="handleUpdateStatus"
-        @getPatientInfo="getPatientInfo"
         :value="list.patientList"
         :status="reservationStatusList"
         :date="selectedDate.date"
