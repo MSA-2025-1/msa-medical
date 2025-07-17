@@ -20,7 +20,7 @@ import { ENDPOINTS } from '@/util/endpoints';
 import { onMounted, reactive } from 'vue';
 import { getStompClient, subscribeChannel } from '@/util/stompMethod';
 import { usePatientViewStore } from '@/stores/patientViewStore'
-import '@/assets/css/payment.css'
+import '@/assets/css/Payment.css'
 const store = usePatientViewStore()
 
 let client ;

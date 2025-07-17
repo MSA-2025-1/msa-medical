@@ -7,14 +7,14 @@
         <div class="chat-room-box">
             <div v-for="(msg, idx) in state.messages" :key="msg.messageId || idx">
                 <div v-if="shouldShowDate(idx)" class="date-divider">
-                    {{ dayjs(msg.createDate).format('YYYY.MM.DD') }}
+                    {{ dayjs.utc(msg.createDate).tz('Asia/Seoul').format('YYYY.MM.DD')  }}    
                 </div>
             <div :class="msg.uuid === uuid ? 'my-msg' : 'other-msg'">
                 <div v-if="shouldShowName(idx, msg)">
                     <strong>{{ msg.name }}</strong>
                 </div>
                 {{ msg.content }}<br />
-                <small>{{ dayjs(msg.createDate).format('A h:mm:ss') }}</small>
+                <small>{{  msg.createDate ? dayjs.utc(msg.createDate).tz('Asia/Seoul').format('A h:mm') : dayjs().format('A h:mm') }}</small>
             </div>
         </div>
         </div>
@@ -34,7 +34,11 @@ import { getStompClient, sendMsg, subscribeChannel } from '@/util/stompMethod';
 import dayjs from 'dayjs';
 import 'dayjs/locale/ko'
 import { computed, nextTick, onMounted, reactive, watch } from 'vue';
+import utc from 'dayjs/plugin/utc'
+import timezone from 'dayjs/plugin/timezone'
 dayjs.locale('ko') // 오후 || 오전 표시 해주는거
+dayjs.extend(utc)
+dayjs.extend(timezone)
 
 const props = defineProps({
     roomId : Number
@@ -149,8 +153,15 @@ scrollToBottom();}, { deep: true });
 
 function shouldShowDate(index) {
   if (index === 0) return true;
-  const current = dayjs(state.messages[index].createDate).format('YYYY-MM-DD');
-  const prev = dayjs(state.messages[index - 1].createDate).format('YYYY-MM-DD');
+
+  const getKSTDate = (msg) => {
+    const date = msg.createDate ?? dayjs();
+    return dayjs.utc(date).tz('Asia/Seoul').format('YYYY-MM-DD');
+  }
+
+  const current = getKSTDate(state.messages[index]);
+  const prev = getKSTDate(state.messages[index - 1]);
+
   return current !== prev;
 }
 </script>

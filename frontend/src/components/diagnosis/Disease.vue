@@ -22,7 +22,7 @@
       <ul class="medicine-search-selected-list">
         <li v-for="(item, index) in state.inputText" :key="index">
           {{ item.code }} - {{ item.name }}
-          <button @click="removeDisease(index)" class="x-btn" >x</button>
+          <button @click="removeDisease(index)"class="medicine-remove-btn" >x</button>
         </li>
       </ul>
     </div>
