@@ -28,7 +28,7 @@ public class ChatService {
 		
 		Member name = memberService.getByUuid(content.getUuid());
 		content.setName(name.getName()); // 화면에 표여주기위해서 
-	    content.setCreateDate(LocalDateTime.now()); // 화면에 표여주기위해서 
+	    
 		chatMessageService.saveMessage(content);
 		messagingTemplate.convertAndSend("/sub/chatroom/" + content.getRoomId(), content);	
 	}
