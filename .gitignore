@@ -5,4 +5,5 @@
 .vscode/
 
 mariadb/data/
+mariadb2/
 .env
