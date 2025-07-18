@@ -13,10 +13,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class FindReservationDate {
 
-    private String patientUuid; // 의료진 예약 대비
+    private String patientUuid;
     private String doctorUuid;
     private LocalDateTime dateTime;
     private boolean isToday;
-//    private OffsetDateTime dateTime;
 
 }

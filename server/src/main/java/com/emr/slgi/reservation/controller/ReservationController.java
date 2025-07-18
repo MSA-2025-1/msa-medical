@@ -51,31 +51,8 @@ public class ReservationController {
     }
 
     @PreAuthorize("hasAnyRole('PATIENT', 'DOCTOR', 'NURSE')")
-    @PostMapping("/hold")
-    public ResponseEntity<?> holdReservation(@RequestBody FindReservationDate reservationDate) {
-
-        System.out.println(reservationDate.getDateTime());
-        System.out.println(Validate.regexValidate(Map.of(Validate.MEMBER_UUID_REGEX, reservationDate.getDoctorUuid())).contains(false));
-
-
-        if(reservationDate.getDoctorUuid() == null || Validate.regexValidate(Map.of(Validate.MEMBER_UUID_REGEX, reservationDate.getDoctorUuid())).contains(false)) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, ReservationErrorMessage.CHOOSE_DOCTOR);
-        }
-
-        if(reservationDate.getDateTime() == null || reservationDate.getDateTime().toLocalDate().isBefore(LocalDate.now())) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, ReservationErrorMessage.CAN_NOT_FIND_RESERVATION_DATE);
-        }
-
-        if(rService.holdReservation(reservationDate) != 1) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, CommonErrorMessage.RETRY);
-        }
-
-        return ResponseEntity.ok().build();
-    }
-
-    @PreAuthorize("hasAnyRole('PATIENT', 'DOCTOR', 'NURSE')")
     @GetMapping("/getReservationList/{doctorUuid}/{dateTime}")
-    public ResponseEntity<Map<String, List<ReservationList>>> getReservationList(
+    public ResponseEntity<Map<String, List<ReservationList>>> getReservationSlots(
             @PathVariable("doctorUuid") String doctorUuid,
             @PathVariable("dateTime") LocalDateTime dateTime) {
 
@@ -89,42 +66,25 @@ public class ReservationController {
 
         return ResponseEntity.ok(
                 Map.of("reservationList",
-                        rService.getReservationList(
+                        rService.getReservationSlots(
                                 FindReservationDate.builder().dateTime(dateTime).doctorUuid(doctorUuid).build()
-                        ).orElse(List.of())
+                        )
                 )
         );
 
     }
 
-    @PreAuthorize("hasRole('PATIENT')")
-    @GetMapping("/getReservationList/{dateTime}")
-    public ResponseEntity<Map<String, List<ReservationList>>> getReservationList(@PathVariable("dateTime") LocalDateTime dateTime) {
+    @PreAuthorize("hasAnyRole('DOCTOR','PATIENT', 'NURSE')")
+    @GetMapping("/allSlots/{dateTime}")
+    public ResponseEntity<?> getAllSlots(@PathVariable("dateTime") LocalDateTime dateTime) {
 
         if(dateTime == null || dateTime.toLocalDate().isBefore(LocalDate.now())) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, ReservationErrorMessage.CAN_NOT_FIND_RESERVATION_DATE);
         }
 
         return ResponseEntity.ok(
-                Map.of("reservationList", rService.getReservationList(dateTime).orElse(List.of()))
+                Map.of("allSlots", rService.getAllSlots(FindReservationDate.builder().dateTime(dateTime).build()))
         );
-
-    }
-
-    @PreAuthorize("hasAnyRole('PATIENT', 'DOCTOR', 'NURSE')")
-    @PutMapping("/cancelHoldingReservation")
-    public ResponseEntity<?> cancelHoldingReservation(@RequestBody ReservationList rl) {
-
-        if(rl.getPatientUuid() == null || Validate.regexValidate(Map.of(Validate.MEMBER_UUID_REGEX, rl.getPatientUuid())).contains(false)) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, ReservationErrorMessage.CAN_NOT_FIND_PATIENT);
-        }
-
-        if(!rService.cancelHoldingReservation(rl.getPatientUuid())) {
-
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, CommonErrorMessage.RETRY);
-        }
-
-        return ResponseEntity.ok().build();
 
     }
 
@@ -144,24 +104,6 @@ public class ReservationController {
                 Map.of(
                         "message", ReservationMessage.CANCEL_RESERVATION_SUCCESS.getMessage()
                 )
-        );
-
-    }
-
-    @PreAuthorize("hasRole('PATIENT')")
-    @PutMapping("/change/{reservationId}/{dateTime}")
-    public ResponseEntity<Map<String, String>> changeReservation(@PathVariable("reservationId") String reservationId, @PathVariable("dateTime") LocalDateTime dateTime) {
-
-        if(reservationId == null || Validate.regexValidate(Map.of(Validate.MEMBER_UUID_REGEX, reservationId)).contains(false)) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, ReservationErrorMessage.CHOOSE_DOCTOR);
-        }
-
-        if(!rService.changeReservation(reservationId, dateTime)) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, ReservationErrorMessage.RESERVATION_CHANGE_ERROR + CommonErrorMessage.RETRY);
-        }
-
-        return ResponseEntity.ok(
-                Map.of("message", "예약이 변경됐습니다.")
         );
 
     }
@@ -262,7 +204,5 @@ public class ReservationController {
                 )
         );
     }
-
-
 
 }

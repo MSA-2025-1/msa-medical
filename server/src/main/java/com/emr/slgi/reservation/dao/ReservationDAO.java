@@ -26,21 +26,13 @@ public interface ReservationDAO {
 
     int makeReservation(ReservationSlot rs);
 
-    List<ReservationList> getReservationList(
+    List<ReservationList> getReservationSlots(
             FindReservationDate reservation
     );
 
-    int holdReservation(FindReservationDate reservationDate);
-
-    int cancelHoldingReservation(String patientUuid);
-
     int getAffectedRowsCount(Map<String, Object> reservationData);
 
-    List<ReservationList> getReservationListByStaff(Map<String, Object> date);
-
     int cancelReservation(@Param("uuidForCancel") Set UuidForCancel);
-
-    int changeReservation(String reservationId, LocalDateTime dateTime);
 
     List<ReservationList> getFullReservationList(@Param("doctorUuid") String doctorUuid, @Param("date")LocalDateTime date);
 
@@ -49,4 +41,5 @@ public interface ReservationDAO {
     List<ReservationListByPatient> getReservationListPerPatient(String patientUuid);
 
     int checkReservation(Long slotId);
+
 }

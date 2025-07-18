@@ -5,14 +5,14 @@
 <mapper namespace="com.emr.slgi.reservation.dao.ReservationDAO">
 
     <sql id="afterToday">
-        RESERVATION_DATE > #{dateTime}
+        S.SLOT > #{dateTime}
     </sql>
 
     <sql id="today">
         <![CDATA[
-            RESERVATION_DATE >= #{dateTime}
+            S.SLOT >= #{dateTime}
             AND
-            RESERVATION_DATE < DATE_ADD(DATE(#{dateTime}), INTERVAL 1 DAY)
+            S.SLOT < DATE_ADD(DATE(#{dateTime}), INTERVAL 1 DAY)
         ]]>
     </sql>
 
@@ -38,11 +38,13 @@
             )
     </insert>
 
-    <select id="getReservationList" resultType="com.emr.slgi.reservation.dto.ReservationList">
+    <select id="getReservationLSlots" resultType="com.emr.slgi.reservation.dto.ReservationList">
         SELECT
-            PATIENT_UUID, DOCTOR_UUID, RESERVATION_DATE
+            R.SLOT_ID, S.SLOT
         FROM
-            TB_RESERVATION
+            TB_RESERVATION R
+                JOIN TB_SLOT S
+                ON (R.SLOT_ID = S.ID)
         WHERE
             DOCTOR_UUID = #{doctorUuid}
             AND
@@ -55,33 +57,8 @@
                 </otherwise>
             </choose>
             AND
-            STATUS IN ('RS01', 'RS03')
+            STATUS IN ('RS01')
     </select>
-
-    <insert id="holdReservation">
-        INSERT INTO
-            TB_RESERVATION
-        VALUES
-            (
-             UUID(),
-             #{patientUuid},
-             #{doctorUuid},
-             'RS03',
-             #{dateTime},
-             NULL
-            )
-    </insert>
-
-    <update id="cancelHoldingReservation">
-        UPDATE
-            TB_RESERVATION
-        SET
-            STATUS = 'RS05'
-        WHERE
-            PATIENT_UUID = #{patientUuid}
-            AND
-            STATUS = 'RS03'
-    </update>
 
     <select id="getAffectedRowsCount" resultType="int">
         SELECT
@@ -89,17 +66,6 @@
         FROM TB_RESERVATION
         WHERE
             ${where}
-    </select>
-
-    <select id="getReservationListByStaff" parameterType="map">
-        SELECT
-            PATIENT_UUID, DOCTOR_UUID, RESERVATION_DATE
-        FROM
-            TB_RESERVATION
-        WHERE
-            RESERVATION_DATE BETWEEN #{start} AND #{end}
-            AND
-            STATUS = 'RS01'
     </select>
 
     <update id="cancelReservation">
@@ -111,15 +77,6 @@
         <foreach collection="uuidForCancel" item="uuid" open="(" separator="," close=")">
             #{uuid}
         </foreach>
-    </update>
-
-    <update id="changeReservation">
-        UPDATE
-            TB_RESERVATION
-        SET
-            RESERVATION_DATE = #{dateTime}
-        WHERE
-            UUID = #{reservationId}
     </update>
 
     <select id="getFullReservationList">

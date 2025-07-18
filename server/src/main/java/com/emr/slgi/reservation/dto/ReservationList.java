@@ -16,7 +16,8 @@ public class ReservationList {
     private String patientUuid;
     private String doctorUuid;
     private String name;
+    private String slotId;
     private ReservationStatus status;
-    private LocalDateTime reservationDate;
+    private LocalDateTime slot;
 
 }

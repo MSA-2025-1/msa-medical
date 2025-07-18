@@ -9,7 +9,6 @@ import java.time.LocalDateTime;
 public class Slot {
 
     private long id;
-    private ReceptionStatus status;
     private LocalDateTime slot;
 
 }
