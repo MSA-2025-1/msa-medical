@@ -19,13 +19,21 @@
     <insert id="makeReservation">
         INSERT INTO
             TB_RESERVATION
+            (
+                UUID,
+                PATIENT_UUID,
+                DOCTOR_UUID,
+                SLOT_ID,
+                STATUS,
+                SYMPTOM
+            )
         VALUES
             (
                 UUID(),
-                #{patientUuid}, -- 임시 데이터
+                #{patientUuid},
                 #{doctorUuid},
-                'RS01', -- 임시 데이터
-                #{dateTime},
+                #{slotId},
+                'RS01',
                 #{symptom}
             )
     </insert>
@@ -159,6 +167,17 @@
             R.PATIENT_UUID = #{patientUuid}
             AND
             R.STATUS = 'RS01'
+    </select>
+
+    <select id="checkReservation">
+        SELECT
+            COUNT(*)
+        FROM
+            TB_RESERVATION
+        WHERE
+            SLOT_ID = #{slotId}
+            AND
+            STATUS IN ('RS01', 'RS04')
     </select>
 
 </mapper>

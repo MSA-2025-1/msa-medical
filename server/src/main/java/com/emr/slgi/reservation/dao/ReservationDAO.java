@@ -2,6 +2,8 @@ package com.emr.slgi.reservation.dao;
 
 import com.emr.slgi.reservation.dto.*;
 import com.emr.slgi.reservation.enums.ReservationStatus;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -22,7 +24,7 @@ import com.emr.slgi.reservation.dto.ReservationListByPatient;
 @Mapper
 public interface ReservationDAO {
 
-    int makeReservation(ReservationForm rf);
+    int makeReservation(ReservationSlot rs);
 
     List<ReservationList> getReservationList(
             FindReservationDate reservation
@@ -45,4 +47,6 @@ public interface ReservationDAO {
     int updateReservationStatus(@Param("uuid") String uuid, @Param("status") ReservationStatus status);
 
     List<ReservationListByPatient> getReservationListPerPatient(String patientUuid);
+
+    int checkReservation(Long slotId);
 }

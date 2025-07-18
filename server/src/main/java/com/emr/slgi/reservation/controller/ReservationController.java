@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.emr.slgi.reservation.dto.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
@@ -20,10 +21,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.emr.slgi.reception.enums.ReceptionStatus;
-import com.emr.slgi.reservation.dto.FindReservationDate;
-import com.emr.slgi.reservation.dto.ReservationForm;
-import com.emr.slgi.reservation.dto.ReservationList;
-import com.emr.slgi.reservation.dto.ReservationListByPatient;
 import com.emr.slgi.reservation.enums.ReservationMessage;
 import com.emr.slgi.reservation.enums.ReservationStatus;
 import com.emr.slgi.reservation.service.ReservationService;
@@ -47,28 +44,9 @@ public class ReservationController {
 
     @PreAuthorize("hasAnyRole('PATIENT', 'DOCTOR', 'NURSE')")
     @PostMapping
-    public ResponseEntity<Map<String, String>> makeReservationByPatient(@Valid @RequestBody ReservationForm rf){
+    public ResponseEntity<Map<String, String>> makeReservation(@Valid @RequestBody ReservationSlot rs){ // 시간대는 슬롯 id로 넘겨준다.
 
-        if(rService.makeReservation(rf) != 1) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, ReservationErrorMessage.RESERVATION_RUN_ERROR + " " + CommonErrorMessage.RETRY);
-        }
-        messagingTemplate.convertAndSend("/sub/status","{}");
-        return ResponseEntity.ok(
-                Map.of("message", "예약이 완료됐습니다.")
-        );
-
-    }
-    @PreAuthorize("hasAnyRole('DOCTOR', 'NURSE')")
-    @PostMapping("/staff")
-    public ResponseEntity<Map<String, String>> makeReservationByStaff(@Valid @RequestBody ReservationForm rf){
-
-        if(rService.makeReservation(rf) != 1) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, ReservationErrorMessage.RESERVATION_RUN_ERROR + " " + CommonErrorMessage.RETRY);
-        }
-
-        return ResponseEntity.ok(
-                Map.of("message", "예약이 완료됐습니다.")
-        );
+        return rService.makeReservation(rs);
 
     }
 
@@ -284,5 +262,7 @@ public class ReservationController {
                 )
         );
     }
+
+
 
 }
