@@ -20,6 +20,8 @@ instance.interceptors.request.use(
   error => Promise.reject(error)
 );
 
+// let hasRedirected = false;
+
 instance.interceptors.response.use(
   response => response,
   async error => {

@@ -14,6 +14,7 @@ import io.jsonwebtoken.security.Keys;
 
 @Component
 public class JwtUtil {
+  // TODO: key 관리 방법 개선 필요
 
   public String generateToken(Map<String, String> claims, Date exp, String secret) {
     SecretKey key = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
