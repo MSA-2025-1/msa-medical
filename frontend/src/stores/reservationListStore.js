@@ -1,13 +1,12 @@
 import {defineStore} from "pinia";
 import {useUserStore} from "@/stores/userStore.js";
-import {patientMethods} from "@/reservation/util/reservation.js";
+import {reservation} from "@/reservation/util/reservation.js";
 import {errorMessage} from "@/util/errorMessage.js";
 import {common} from "@/util/common.js";
 import {computed, ref} from "vue";
 import {reception} from "@/reception/util/reception.js";
 import {status} from "@/status/util/status.js";
-import {ENDPOINTS} from "@/util/endpoints.js";
-import {customFetch} from "@/util/customFetch.js";
+import {roles} from "@/util/roles.js";
 
 export const useReservationListStore = defineStore('reservation', () =>  {
 
@@ -26,7 +25,7 @@ export const useReservationListStore = defineStore('reservation', () =>  {
 
         console.log(userInfo.value.role);
 
-        if(userInfo.value.role === 'DOCTOR') {
+        if(userInfo.value.role === roles.DOCTOR) {
 
             doctorList.value = [{
                 name: userInfo.value.name,
@@ -61,7 +60,7 @@ export const useReservationListStore = defineStore('reservation', () =>  {
 
             doctorList.value.map(async (doctor) => {
 
-                const list = await patientMethods.getFullReservationList(doctor.uuid, date);
+                const list = await reservation.getReservationListByStaff(doctor.uuid, date);
 
                 return {
                     doctor,

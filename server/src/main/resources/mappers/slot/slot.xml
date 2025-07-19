@@ -1,0 +1,39 @@
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.emr.slgi.reservation.dao.SlotDAO">
+
+    <select id="checkSlotExistence">
+        SELECT
+            COUNT(*)
+        FROM
+            TB_SLOT
+        WHERE
+            ID = #{slotId}
+    </select>
+
+    <select id="selectSlotForUpdate">
+        SELECT
+            COUNT(*)
+        FROM
+            TB_SLOT
+        WHERE
+            ID = #{slotId}
+            FOR UPDATE;
+    </select>
+
+    <select id="getAllSlots">
+        SELECT
+            *
+        FROM
+            TB_SLOT
+        WHERE
+            SLOT
+            BETWEEN
+                #{dateTime}
+            AND
+                DATE_ADD(DATE(#{dateTime}), INTERVAL 1 DAY)
+    </select>
+
+</mapper>

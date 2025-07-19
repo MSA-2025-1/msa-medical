@@ -24,7 +24,7 @@ import dayjs from "dayjs";
     receptionStatusList.value = waitingListStore.receptionStatusList;
 
   };
-  // 상태 변경 시 동작하는 함수
+
   const handleUpdateStatus = async (patient) => {
 
     await reception.updateReceptionStatus(patient);
@@ -41,11 +41,13 @@ import dayjs from "dayjs";
         refreshWaitingList();
       });
     }, 100); 
-};
+  };
+
   onMounted(() => {
     client = getStompClient((client) => {
       statusSub(client)
     });
+    
   })
 
 </script>
@@ -67,6 +69,7 @@ import dayjs from "dayjs";
               @updateStatus="handleUpdateStatus"
               :value="list.patientList"
               :status="receptionStatusList"
+              :date="today"
             />
           </div>
         </div>

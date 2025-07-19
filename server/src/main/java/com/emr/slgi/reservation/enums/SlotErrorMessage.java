@@ -5,10 +5,9 @@ import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor
-public enum ReservationMessage {
+public enum SlotErrorMessage {
 
-    CANCEL_RESERVATION_SUCCESS("예약이 취소됐습니다."),
-    SUCCESS_INSERT_RESERVATION("예약이 됐습니다.");
+    IS_NOT_EXISTED_TIME("존재하지 않는 시간대입니다.");
 
     private final String message;
 

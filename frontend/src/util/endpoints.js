@@ -147,24 +147,18 @@ export const ENDPOINTS = {
         reservation: {
             method: 'post',
             url: '/reservation',
-            // 추후 JWT에서 환자 UUID 포함해 전송.
-            // 추후 팀장님과 얘기해서 patient 속성쪽으로 이동할지 결정.
         },
         reservationList: (selectedVal) => ({
             method: 'get',
             url: `/reservation/getReservationList/${selectedVal.doctorUuid}/${selectedVal.dateTime}`
         }),
-        reservationHold: {
-            method: 'post',
-            url: '/reservation/hold'
-        },
-        cancelHoldingReservation: {
-            method: 'put',
-            url: '/reservation/cancelHoldingReservation'
-        },
-        getFullReservationList: (uuid, date) => ({
+        getAllSlots: (dateTime) => ({
             method: 'get',
-            url: `/reservation/${uuid}/${date}/list`
+            url: `/reservation/allSlots/${dateTime}`
+        }),
+        getReservationListByStaff: (uuid, date) => ({
+            method: 'get',
+            url: `/reservation/${uuid}/${date}/listByStaff`
         }),
         updateReservationStatus: ({uuid, updateStatus}) => ({
             method: 'put',
@@ -172,7 +166,7 @@ export const ENDPOINTS = {
         }),
         getReservationListPerPatient: (uuid) => ({
             method: 'get',
-            url: `/reservation/${uuid}/patientlist`
+            url: `/reservation/${uuid}/listByPatient`
         }),
         cancelReservation: {
             method: 'put',

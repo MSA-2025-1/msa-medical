@@ -4,94 +4,46 @@
 
 <mapper namespace="com.emr.slgi.reservation.dao.ReservationDAO">
 
-    <sql id="afterToday">
-        RESERVATION_DATE > #{dateTime}
-    </sql>
-
-    <sql id="today">
-        <![CDATA[
-            RESERVATION_DATE >= #{dateTime}
-            AND
-            RESERVATION_DATE < DATE_ADD(DATE(#{dateTime}), INTERVAL 1 DAY)
-        ]]>
-    </sql>
-
     <insert id="makeReservation">
         INSERT INTO
             TB_RESERVATION
+            (
+                UUID,
+                PATIENT_UUID,
+                DOCTOR_UUID,
+                SLOT_ID,
+                STATUS,
+                SYMPTOM
+            )
         VALUES
             (
                 UUID(),
                 #{patientUuid},
                 #{doctorUuid},
+                #{slotId},
                 'RS01',
-                #{dateTime},
                 #{symptom}
             )
     </insert>
 
-    <select id="getReservationList" resultType="com.emr.slgi.reservation.dto.ReservationList">
+    <select id="getReservationSlots" resultType="com.emr.slgi.reservation.dto.Slot">
         SELECT
-            PATIENT_UUID, DOCTOR_UUID, RESERVATION_DATE
+            R.SLOT_ID, S.SLOT
         FROM
-            TB_RESERVATION
+            TB_RESERVATION R
+                JOIN TB_SLOT S
+                ON (R.SLOT_ID = S.ID)
         WHERE
             DOCTOR_UUID = #{doctorUuid}
             AND
-            <choose>
-                <when test="isToday">
-                    <include refid="today"/>
-                </when>
-                <otherwise>
-                    <include refid="afterToday"/>
-                </otherwise>
-            </choose>
-            AND
-            STATUS IN ('RS01', 'RS03')
-    </select>
-
-    <insert id="holdReservation">
-        INSERT INTO
-            TB_RESERVATION
-        VALUES
-            (
-             UUID(),
-             #{patientUuid},
-             #{doctorUuid},
-             'RS03',
-             #{dateTime},
-             NULL
+            (SLOT
+                BETWEEN
+                #{dateTime}
+                AND
+                DATE_ADD(DATE (#{dateTime}), INTERVAL 1 DAY)
             )
-    </insert>
-
-    <update id="cancelHoldingReservation">
-        UPDATE
-            TB_RESERVATION
-        SET
-            STATUS = 'RS05'
-        WHERE
-            PATIENT_UUID = #{patientUuid}
             AND
-            STATUS = 'RS03'
-    </update>
-
-    <select id="getAffectedRowsCount" resultType="int">
-        SELECT
-            IFNULL(COUNT(*), 0)
-        FROM TB_RESERVATION
-        WHERE
-            ${where}
-    </select>
-
-    <select id="getReservationListByStaff" parameterType="map">
-        SELECT
-            PATIENT_UUID, DOCTOR_UUID, RESERVATION_DATE
-        FROM
-            TB_RESERVATION
-        WHERE
-            RESERVATION_DATE BETWEEN #{start} AND #{end}
-            AND
-            STATUS = 'RS01'
+            STATUS IN ('RS01')
     </select>
 
     <update id="cancelReservation">
@@ -105,34 +57,27 @@
         </foreach>
     </update>
 
-    <update id="changeReservation">
-        UPDATE
-            TB_RESERVATION
-        SET
-            RESERVATION_DATE = #{dateTime}
-        WHERE
-            UUID = #{reservationId}
-    </update>
-
-    <select id="getFullReservationList">
+    <select id="getReservationListByStaff">
         SELECT
             R.UUID,
             R.PATIENT_UUID,
             M.NAME AS NAME,
             R.DOCTOR_UUID,
             R.STATUS,
-            R.RESERVATION_DATE
+            S.SLOT
         FROM
-            TB_RESERVATION R
+            (TB_RESERVATION R
                 JOIN
-            TB_MEMBER M
-                ON R.PATIENT_UUID = M.UUID
+                    TB_MEMBER M
+                ON R.PATIENT_UUID = M.UUID)
+                JOIN TB_SLOT S
+                ON R.SLOT_ID = S.ID
         WHERE
             R.DOCTOR_UUID = #{doctorUuid}
             AND
             R.STATUS = 'RS01'
             AND
-            R.RESERVATION_DATE
+            S.SLOT
                 BETWEEN DATE(#{date})
                 AND
                 DATE_ADD(DATE(#{date}), INTERVAL 1 DAY)
@@ -150,15 +95,30 @@
 
     <select id="getReservationListPerPatient">
         SELECT
-            R.UUID, M.NAME, R.RESERVATION_DATE
+            R.UUID, M.NAME, S.SLOT
         FROM
+            (
             TB_RESERVATION R
                 JOIN TB_MEMBER M
                 ON(R.DOCTOR_UUID = M.UUID)
+            )
+                JOIN TB_SLOT S
+                ON(R.SLOT_ID = S.ID)
         WHERE
             R.PATIENT_UUID = #{patientUuid}
             AND
             R.STATUS = 'RS01'
+    </select>
+
+    <select id="checkReservation">
+        SELECT
+            COUNT(*)
+        FROM
+            TB_RESERVATION
+        WHERE
+            SLOT_ID = #{slotId}
+            AND
+            STATUS IN ('RS01', 'RS04')
     </select>
 
 </mapper>

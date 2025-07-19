@@ -31,8 +31,8 @@
             R.DOCTOR_UUID = #{doctorUuid}
             AND
             R.STATUS IN ('RE01', 'RE03')
-          AND
-          R.CREATE_DATE BETWEEN CURDATE() AND CURDATE() + INTERVAL 1 DAY
+            AND
+            R.CREATE_DATE BETWEEN CURDATE() AND CURDATE() + INTERVAL 1 DAY
         ORDER BY
             TURN;
     </select>

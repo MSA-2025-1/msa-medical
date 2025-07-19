@@ -5,44 +5,34 @@ import com.emr.slgi.reservation.enums.ReservationStatus;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
-
 import com.emr.slgi.reservation.dto.FindReservationDate;
-import com.emr.slgi.reservation.dto.ReservationForm;
-import com.emr.slgi.reservation.dto.ReservationList;
+import com.emr.slgi.reservation.dto.ReservationListByStaff;
 import com.emr.slgi.reservation.dto.ReservationListByPatient;
 
 @Mapper
 public interface ReservationDAO {
 
-    int makeReservation(ReservationForm rf);
+    int makeReservation(ReservationSlot rs);
 
-    List<ReservationList> getReservationList(
+    List<Slot> getReservationSlots(
             FindReservationDate reservation
     );
 
-    int holdReservation(FindReservationDate reservationDate);
-
-    int cancelHoldingReservation(String patientUuid);
-
     int getAffectedRowsCount(Map<String, Object> reservationData);
-
-    List<ReservationList> getReservationListByStaff(Map<String, Object> date);
 
     int cancelReservation(@Param("uuidForCancel") Set UuidForCancel);
 
-    int changeReservation(String reservationId, LocalDateTime dateTime);
-
-    List<ReservationList> getFullReservationList(@Param("doctorUuid") String doctorUuid, @Param("date")LocalDateTime date);
+    List<ReservationListByStaff> getReservationListByStaff(@Param("doctorUuid") String doctorUuid, @Param("date")LocalDateTime date);
 
     int updateReservationStatus(@Param("uuid") String uuid, @Param("status") ReservationStatus status);
 
     List<ReservationListByPatient> getReservationListPerPatient(String patientUuid);
+
+    int checkReservation(Long slotId);
+
 }
