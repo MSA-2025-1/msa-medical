@@ -1,7 +1,6 @@
 package com.emr.slgi.reservation.service;
 
 import com.emr.slgi.reception.dao.ReceptionDAO;
-import com.emr.slgi.reception.enums.ReceptionStatus;
 import com.emr.slgi.reservation.dao.ReservationDAO;
 import com.emr.slgi.reservation.dao.SlotDAO;
 import com.emr.slgi.reservation.dto.*;
@@ -10,7 +9,6 @@ import com.emr.slgi.reservation.enums.ReservationStatus;
 import com.emr.slgi.reservation.enums.SlotErrorMessage;
 import com.emr.slgi.util.CommonErrorMessage;
 import com.emr.slgi.util.ReservationErrorMessage;
-import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -23,7 +21,6 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.OffsetDateTime;
 import java.util.*;
 
 @Slf4j
@@ -68,13 +65,8 @@ public class ReservationService {
 
     }
 
-    public int getAffectedRowsCount(Map reservationData) {
-
-        return rDao.getAffectedRowsCount(reservationData);
-
-    }
-
-    public List<ReservationList> getReservationSlots(FindReservationDate reservation) {
+    @Transactional
+    public List<Slot> getReservationSlots(FindReservationDate reservation) {
 
         if(reservation.getDateTime().toLocalDate().isAfter(LocalDate.now())) {
             reservation.setDateTime(reservation.getDateTime().toLocalDate().atStartOfDay());
@@ -84,6 +76,7 @@ public class ReservationService {
 
     }
 
+    @Transactional
     public boolean cancelReservation(Set uuidForCancel) {
 
         if(rDao.cancelReservation(uuidForCancel) < 1) {
@@ -94,12 +87,14 @@ public class ReservationService {
 
     }
 
-    public List<ReservationList> getFullReservationList(String doctorUuid, LocalDateTime date) {
-        log.info("날짜 : {}", String.valueOf(date));
-        return rDao.getFullReservationList(doctorUuid, date);
+    @Transactional
+    public List<ReservationListByStaff> getReservationListByStaff(String doctorUuid, LocalDateTime date) {
+
+        return rDao.getReservationListByStaff(doctorUuid, date);
 
     }
 
+    @Transactional
     public int updateReservationStatus(String uuid, String updateStatus) {
 
         ReservationStatus status = ReservationStatus.from(updateStatus);
@@ -108,18 +103,21 @@ public class ReservationService {
 
     }
 
+    @Transactional
     public int updateWaitingStatusOnReception(String uuid, String updateStatus) {
 
         return receptionDAO.updateWaitingStatusOnReception(uuid, updateStatus);
 
     }
 
+    @Transactional
     public List<ReservationListByPatient> getReservationListPerPatient(String patientUuid) {
 
         return rDao.getReservationListPerPatient(patientUuid);
 
     }
 
+    @Transactional
     public List<Slot> getAllSlots(FindReservationDate reservation) {
 
         if(reservation.getDateTime().toLocalDate().isAfter(LocalDate.now())) {

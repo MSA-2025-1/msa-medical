@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
 public class Slot {
 
     private long id;
+    private long slotId;
     private LocalDateTime slot;
 
 }

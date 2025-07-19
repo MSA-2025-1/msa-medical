@@ -118,11 +118,9 @@ import '@/assets/css/icons.css';
 
   }
 
-  const goHome = async () => {
+  const goHome = () => {
 
-    if(!reservationChk.timeChk) {
-      await routeToHome();
-    }
+    routeToHome();
 
   }
 

@@ -156,9 +156,9 @@ export const ENDPOINTS = {
             method: 'get',
             url: `/reservation/allSlots/${dateTime}`
         }),
-        getFullReservationList: (uuid, date) => ({
+        getReservationListByStaff: (uuid, date) => ({
             method: 'get',
-            url: `/reservation/${uuid}/${date}/list`
+            url: `/reservation/${uuid}/${date}/listByStaff`
         }),
         updateReservationStatus: ({uuid, updateStatus}) => ({
             method: 'put',
@@ -166,7 +166,7 @@ export const ENDPOINTS = {
         }),
         getReservationListPerPatient: (uuid) => ({
             method: 'get',
-            url: `/reservation/${uuid}/patientlist`
+            url: `/reservation/${uuid}/listByPatient`
         }),
         cancelReservation: {
             method: 'put',

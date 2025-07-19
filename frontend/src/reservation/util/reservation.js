@@ -121,11 +121,11 @@ export const reservation = {
         }
 
     },
-    getFullReservationList: async(uuid, date) => {
+    getReservationListByStaff: async(uuid, date) => {
 
         try {
 
-            const response = await customFetch(ENDPOINTS.reservation.getFullReservationList(uuid, date));
+            const response = await customFetch(ENDPOINTS.reservation.getReservationListByStaff(uuid, date));
 
             if(response.status === 200) {
                 return response.data?.reservationList;

@@ -3,60 +3,62 @@ import { computed, ref, onMounted, onBeforeUnmount } from "vue";
 import dayjs from "dayjs";
 import "@/assets/css/WaitingStatus.css";
 
-const { status, value, date } = defineProps({
-  status: Array,
-  value: String,
-  date: dayjs
-});
-const isDropdownOpen = ref(false);
+  const { status, value, date } = defineProps({
+    status: Array,
+    value: String,
+    date: dayjs
+  });
+  const isDropdownOpen = ref(false);
+  const patientCurrentStatus = computed(() => value);
+  const emit = defineEmits(["update:value"]);
 
-const patientCurrentStatus = computed(() => value);
-const emit = defineEmits(["update:value"]);
-
-const filterStages = {
-  left: { //'현재 상태 제외'
-    condition: ({v, value}) => {
-      return (v.name !== value)
+  const filterStages = {
+    left: { 
+      condition: ({v, value}) => {
+        return (v.name !== value)
+      }
+    },
+    excludeWaiting: {
+      condition: ({v, date}) => {
+        const isToday = dayjs().isSame(date, 'day');
+        return !(!isToday && v.name === '대기');
+      }
     }
-  },
-  excludeWaiting: { //'오늘이 아니면 대기 제외'
-    condition: ({v, date}) => {
-      const isToday = dayjs().isSame(date, 'day');
-      return !(!isToday && v.name === '대기');
+  };
+
+  const leftOver = computed(() => {
+    return Object.values(filterStages).reduce((acc, stage) => {
+      return acc.filter(v => stage.condition({v, date, value}));
+    }, status);
+  });
+
+  const selectedStatus = (name) => {
+    console.log("제발 동작 좀");
+    emit("update:value", name);
+  }
+
+  function toggleDropdown() {
+    isDropdownOpen.value = !isDropdownOpen.value;
+  }
+
+  function closeDropdown() {
+    isDropdownOpen.value = false;
+  }
+
+  function handleClickOutside(event) {
+    const wrapper = event.target.closest('.ws-dropdown-wrapper');
+    if (!wrapper) {
+      closeDropdown();
     }
   }
-};
 
-const leftOver = computed(() => {
-  return Object.values(filterStages).reduce((acc, stage) => {
-    return acc.filter(v => stage.condition({v, date, value}));
-  }, status);
-});
+  onMounted(() => {
+    document.addEventListener('mousedown', handleClickOutside);
+  });
 
-const selectedStatus = (name) => {
-  emit("update:value", name);
-}
-
-function toggleDropdown() {
-  isDropdownOpen.value = !isDropdownOpen.value;
-}
-function closeDropdown() {
-  isDropdownOpen.value = false;
-}
-
-function handleClickOutside(event) {
-  const wrapper = document.querySelector('.ws-dropdown-wrapper');
-  if (wrapper && !wrapper.contains(event.target)) {
-    closeDropdown();
-  }
-}
-
-onMounted(() => {
-  document.addEventListener('mousedown', handleClickOutside);
-});
-onBeforeUnmount(() => {
-  document.removeEventListener('mousedown', handleClickOutside);
-});
+  onBeforeUnmount(() => {
+    document.removeEventListener('mousedown', handleClickOutside);
+  });
 
 </script>
 

@@ -52,7 +52,7 @@ public class ReservationController {
 
     @PreAuthorize("hasAnyRole('PATIENT', 'DOCTOR', 'NURSE')")
     @GetMapping("/getReservationList/{doctorUuid}/{dateTime}")
-    public ResponseEntity<Map<String, List<ReservationList>>> getReservationSlots(
+    public ResponseEntity<Map<String, List<Slot>>> getReservationSlots(
             @PathVariable("doctorUuid") String doctorUuid,
             @PathVariable("dateTime") LocalDateTime dateTime) {
 
@@ -111,8 +111,8 @@ public class ReservationController {
     }
 
     @PreAuthorize("hasAnyRole('DOCTOR', 'NURSE')")
-    @GetMapping("/{uuid}/{date}/list")
-    public ResponseEntity<Map<String, List<ReservationList>>> getFullReservationList(
+    @GetMapping("/{uuid}/{date}/listByStaff")
+    public ResponseEntity<Map<String, List<ReservationListByStaff>>> getReservationListByStaff(
             @PathVariable("uuid") String doctorUuid,
             @PathVariable("date") LocalDateTime date
     ) {
@@ -123,15 +123,11 @@ public class ReservationController {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, ReservationErrorMessage.CAN_NOT_FIND_DOCTOR_INFO + CommonErrorMessage.RETRY);
         }
 
-        List<ReservationList> reservationList = rService.getFullReservationList(doctorUuid, date);
-
-        if(reservationList == null) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, ReservationErrorMessage.CAN_NOT_FIND_RESERVATION_DATE + CommonErrorMessage.RETRY);
-        }
+        List<ReservationListByStaff> list = rService.getReservationListByStaff(doctorUuid, date);
 
         return ResponseEntity.ok(
                 Map.of(
-                        "reservationList", reservationList
+                        "reservationList", list
                 )
         );
 
@@ -185,7 +181,7 @@ public class ReservationController {
     }
 
     @PreAuthorize("hasRole('PATIENT')")
-    @GetMapping("/{uuid}/patientlist")
+    @GetMapping("/{uuid}/listByPatient")
     public ResponseEntity<Map<String, List<ReservationListByPatient>>> getReservationListPerPatient(
             @PathVariable("uuid") String patientUuid
     ) {

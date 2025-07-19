@@ -31,9 +31,8 @@
             R.DOCTOR_UUID = #{doctorUuid}
             AND
             R.STATUS IN ('RE01', 'RE03')
---          오늘 날짜만 조회하기 위해 설정했지만 테스트위해 일단 생략
---           AND
---           R.CREATE_DATE BETWEEN CURDATE() AND CURDATE() + INTERVAL 1 DAY
+            AND
+            R.CREATE_DATE BETWEEN CURDATE() AND CURDATE() + INTERVAL 1 DAY
         ORDER BY
             TURN;
     </select>

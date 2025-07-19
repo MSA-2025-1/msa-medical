@@ -12,106 +12,106 @@ import '@/assets/css/ReservationListByStaff.css'
 import { getStompClient, subscribeChannel } from "@/util/stompMethod";
 
 
-const reservationListStore = useReservationListStore();
-const reservationStatusList = ref();
-const fullReservationList = ref();
-const today = dayjs(new Date);
-const selectedDate = reactive({
-  date: today
-});
-const minDate = today;
-const maxDate = today.add(6, 'day');
-const showCalendar = ref(false);
-let client;
-// 날짜 증감에 따른 동작 함수들
-const setBeforeDate = async () => {
+  const reservationListStore = useReservationListStore();
+  const reservationStatusList = ref();
+  const fullReservationList = ref();
+  const today = dayjs(new Date);
+  const selectedDate = reactive({
+    date: today
+  });
+  const minDate = today;
+  const maxDate = today.add(6, 'day');
+  const showCalendar = ref(false);
+  let client;
 
-  handleDate(selectedDate.date.subtract(1, 'day'));
+  const setBeforeDate = async () => {
 
-  await reservationListStore.promiseAll(selectedDate.date.toISOString());
+    handleDate(selectedDate.date.subtract(1, 'day'));
 
-  fullReservationList.value = reservationListStore.reservationList;
+    await reservationListStore.promiseAll(selectedDate.date.toISOString());
 
-}
+    fullReservationList.value = reservationListStore.reservationList;
 
-const setAfterDate = async () => {
+  }
 
-  handleDate(selectedDate.date.add(1, 'day'));
+  const setAfterDate = async () => {
 
-  await reservationListStore.promiseAll(selectedDate.date.toISOString());
+    handleDate(selectedDate.date.add(1, 'day'));
 
-  fullReservationList.value = reservationListStore.reservationList;
+    await reservationListStore.promiseAll(selectedDate.date.toISOString());
 
-}
+    fullReservationList.value = reservationListStore.reservationList;
 
-const toggleCalendar = () => {
+  }
 
-  showCalendar.value = !showCalendar.value;
+  const toggleCalendar = () => {
 
-}
+    showCalendar.value = !showCalendar.value;
 
-const hideBeforeDateMovement = computed(() => {
-  return (selectedDate.date.isAfter(minDate));
-});
+  }
 
-const hideAfterDateMovement = computed(() => {
-  return (selectedDate.date.isBefore(maxDate));
-})
+  const hideBeforeDateMovement = computed(() => {
+    return (selectedDate.date.isAfter(minDate));
+  });
 
-// 상태 변경 시 동작하는 함수
-const handleUpdateStatus = async ({uuid, updateStatus}) => {
+  const hideAfterDateMovement = computed(() => {
+    return (selectedDate.date.isBefore(maxDate));
+  })
 
-    await reservation.updateReservationStatus({
-      uuid,
-      updateStatus
-    });
+  const handleUpdateStatus = async ({uuid, updateStatus}) => {
 
-  // 성공이면 다시 예약 테이블 가져오기
-  await reservationListStore.promiseAll(selectedDate.date.toISOString());
-  fullReservationList.value = reservationListStore.reservationList;
-
-}
-
-const disabledWeekends = (date) => {
-  return dayjs(date).toDate().getDay() === 0;
-};
-
-const handleDate = (date) => {
-
-  selectedDate.date = dayjs(date);
-
-}
-const refreshWaitingList = async () => {
-  await Promise.all([
-
-      reservationListStore.promiseAll(minDate.toISOString()),
-      reservationListStore.getReservationStatusList()
-
-    ]);
-
-  fullReservationList.value = reservationListStore.reservationList;
-  reservationStatusList.value = reservationListStore.reservationStatusList;
-}
-
-onBeforeMount(async () => {
-  await refreshWaitingList()
-
-});
-
-const statusSub = (client) => {
-    setTimeout(() => {
-      subscribeChannel(client, `/sub/status`, () => {
-        refreshWaitingList();
+      await reservation.updateReservationStatus({
+        uuid,
+        updateStatus
       });
-    }, 100); 
-};
 
-onMounted(() => {
-  client = getStompClient((client) => {
-      statusSub(client)
-    });
-})
+    await reservationListStore.promiseAll(selectedDate.date.toISOString());
+    fullReservationList.value = reservationListStore.reservationList;
 
+  }
+
+  const disabledWeekends = (date) => {
+    return dayjs(date).toDate().getDay() === 0;
+  };
+
+  const handleDate = (date) => {
+
+    selectedDate.date = dayjs(date);
+
+  }
+
+  const refreshWaitingList = async () => {
+
+    await Promise.all([
+
+        reservationListStore.promiseAll(minDate.toISOString()),
+        reservationListStore.getReservationStatusList()
+
+      ]);
+
+    fullReservationList.value = reservationListStore.reservationList;
+    reservationStatusList.value = reservationListStore.reservationStatusList;
+
+  }
+
+  onBeforeMount(async () => {
+    await refreshWaitingList()
+
+  });
+
+  const statusSub = (client) => {
+      setTimeout(() => {
+        subscribeChannel(client, `/sub/status`, () => {
+          refreshWaitingList();
+        });
+      }, 100); 
+  };
+
+  onMounted(() => {
+    client = getStompClient((client) => {
+        statusSub(client)
+      });
+  })
 
 </script>
 

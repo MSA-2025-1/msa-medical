@@ -26,7 +26,7 @@
             )
     </insert>
 
-    <select id="getReservationSlots" resultType="com.emr.slgi.reservation.dto.ReservationList">
+    <select id="getReservationSlots" resultType="com.emr.slgi.reservation.dto.Slot">
         SELECT
             R.SLOT_ID, S.SLOT
         FROM
@@ -65,25 +65,27 @@
         </foreach>
     </update>
 
-    <select id="getFullReservationList">
+    <select id="getReservationListByStaff">
         SELECT
             R.UUID,
             R.PATIENT_UUID,
             M.NAME AS NAME,
             R.DOCTOR_UUID,
             R.STATUS,
-            R.RESERVATION_DATE
+            S.SLOT
         FROM
-            TB_RESERVATION R
+            (TB_RESERVATION R
                 JOIN
-            TB_MEMBER M
-                ON R.PATIENT_UUID = M.UUID
+                    TB_MEMBER M
+                ON R.PATIENT_UUID = M.UUID)
+                JOIN TB_SLOT S
+                ON R.SLOT_ID = S.ID
         WHERE
             R.DOCTOR_UUID = #{doctorUuid}
             AND
             R.STATUS = 'RS01'
             AND
-            R.RESERVATION_DATE
+            S.SLOT
                 BETWEEN DATE(#{date})
                 AND
                 DATE_ADD(DATE(#{date}), INTERVAL 1 DAY)
