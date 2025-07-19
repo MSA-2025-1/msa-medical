@@ -13,4 +13,5 @@ public interface ChatMessageDAO {
 
 	public void saveMessage(ChatMessage content);
 
+	public ChatMessage getById(int messageId);
 }

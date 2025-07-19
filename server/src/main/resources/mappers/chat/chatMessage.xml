@@ -18,4 +18,12 @@
 	insert into TB_CHAT_MESSAGE (room_id, uuid,content)
 	values(#{roomId},#{uuid},#{content})
 	</insert>
+	
+	<select id="getById" resultType="com.emr.slgi.chat.DTO.ChatMessage">
+  	select m.*, m1.name
+	  from TB_CHAT_MESSAGE m
+	  join TB_MEMBER m1 on m.uuid = m1.uuid
+	  where m.message_id = #{messageId}
+</select>
+	
   </mapper>

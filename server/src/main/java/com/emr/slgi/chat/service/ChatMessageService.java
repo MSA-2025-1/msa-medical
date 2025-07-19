@@ -25,4 +25,9 @@ public class ChatMessageService {
 		
 	}
 
+
+	public ChatMessage getById(int messageId) {
+		return chatMessageDAO.getById(messageId);
+	}
+
 }

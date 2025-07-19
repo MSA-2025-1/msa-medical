@@ -7,14 +7,14 @@
         <div class="chat-room-box">
             <div v-for="(msg, idx) in state.messages" :key="msg.messageId || idx">
                 <div v-if="shouldShowDate(idx)" class="date-divider">
-                    {{ dayjs.utc(msg.createDate).tz('Asia/Seoul').format('YYYY.MM.DD')  }}    
+                    {{ dayjs(msg.createDate).format('YYYY-MM-DD')  }}    
                 </div>
             <div :class="msg.uuid === uuid ? 'my-msg' : 'other-msg'">
                 <div v-if="shouldShowName(idx, msg)">
                     <strong>{{ msg.name }}</strong>
                 </div>
                 {{ msg.content }}<br />
-                <small>{{  msg.createDate ? dayjs.utc(msg.createDate).tz('Asia/Seoul').format('A h:mm') : dayjs().format('A h:mm') }}</small>
+                <small>{{ dayjs.utc(msg.createDate).tz('Asia/Seoul').format('A h:mm') }}</small>
             </div>
         </div>
         </div>
@@ -156,7 +156,7 @@ function shouldShowDate(index) {
 
   const getKSTDate = (msg) => {
     const date = msg.createDate ?? dayjs();
-    return dayjs.utc(date).tz('Asia/Seoul').format('YYYY-MM-DD');
+    return dayjs(date).format('YYYY-MM-DD');
   }
 
   const current = getKSTDate(state.messages[index]);

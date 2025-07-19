@@ -1,6 +1,5 @@
 package com.emr.slgi.chat.service;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
@@ -27,10 +26,10 @@ public class ChatService {
 	public void getUuid(ChatMessage content) {
 		
 		Member name = memberService.getByUuid(content.getUuid());
-		content.setName(name.getName()); // 화면에 표여주기위해서 
-	    
+		content.setName(name.getName());
 		chatMessageService.saveMessage(content);
-		messagingTemplate.convertAndSend("/sub/chatroom/" + content.getRoomId(), content);	
+		ChatMessage fullMessage = chatMessageService.getById(content.getMessageId());
+		messagingTemplate.convertAndSend("/sub/chatroom/" + content.getRoomId(), fullMessage);	
 	}
 
 	public void getRoomId(ChatMessage content) {
