@@ -2,6 +2,8 @@ import { getAccessToken } from '@/auth/accessToken';
 import axios from 'axios';
 import { renewAccessToken } from '@/auth/renewAccessToken';
 
+const RETRY_SYMBOL = Symbol('retry');
+
 const instance = axios.create({
     baseURL: '/api'
 });
@@ -23,8 +25,8 @@ instance.interceptors.response.use(
   async error => {
     const originalRequest = error.config;
 
-    if (error.status === 401 && !originalRequest._retry) {
-      originalRequest._retry = true;
+    if (error.status === 401 && !originalRequest[RETRY_SYMBOL]) {
+      originalRequest[RETRY_SYMBOL] = true;
       try {
         await renewAccessToken();
         return instance(originalRequest);

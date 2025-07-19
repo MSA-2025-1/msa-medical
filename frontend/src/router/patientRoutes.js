@@ -1,4 +1,5 @@
 import { useUserStore } from '@/stores/userStore';
+import { roles } from '@/util/roles';
 
 const MainView = () => import('@/patient/views/MainView.vue');
 const MyPageView = () => import("@/patient/views/MyPageView.vue");
@@ -15,7 +16,7 @@ export const patientRoutes = [
     component: PatientLayout,
     beforeEnter: (to, from, next) => {
       const role = useUserStore().user?.role;
-      if (['NURSE', 'DOCTOR'].includes(role)) {
+      if ([roles.NURSE, roles.DOCTOR].includes(role)) {
         return next({ name: 'staffMain' });
       }
       next();
@@ -24,37 +25,41 @@ export const patientRoutes = [
       {
         path: '',
         name: 'home',
-        component: MainView
+        component: MainView,
       },
       {
         path: 'login',
         name: 'loginView',
-        component: LoginView
+        component: LoginView,
       },
       {
         path: 'register',
         name: 'patientRegister',
-        component: RegisterView
+        component: RegisterView,
       },
       {
         path: 'mypage',
         name: 'mypage',
-        component: MyPageView
+        component: MyPageView,
+        meta: { requiresAuth: true,  roles: [roles.PATIENT] },
       },
       {
         path: 'profile/update',
         name: 'updateProfile',
-        component: UpdateProfile
+        component: UpdateProfile,
+        meta: { requiresAuth: true,  roles: [roles.PATIENT] },
       },
       {
         path: 'regReservationByPatient',
         name: 'regReservationByPatient',
         component: RegReservationByPatient,
+        meta: { requiresAuth: true,  roles: [roles.PATIENT] },
       },
       {
         path: 'reservationListByPatient',
         name: 'reservationListByPatient',
-        component: ReservationListByPatient
+        component: ReservationListByPatient,
+        meta: { requiresAuth: true,  roles: [roles.PATIENT] },
       },
     ]
   },
