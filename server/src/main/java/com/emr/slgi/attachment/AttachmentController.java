@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpStatus;
@@ -22,7 +23,9 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @RequestMapping("/image")
 public class AttachmentController {
-	private final String uploadDir = "/Users/Ksy/upload"; //서버에 올리면 서버경로
+	
+	@Value("${file.upload-dir}")
+	private String uploadDir ; 
 	
 	@GetMapping("/{fileName}")
 	public ResponseEntity<Object> getFile(@PathVariable("fileName") String fileName) throws IOException {
