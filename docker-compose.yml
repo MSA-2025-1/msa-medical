@@ -24,8 +24,9 @@ services:
     env_file:
       .env
     environment:
-      - SPRING_PROFILES_ACTIVE=env
-      - UPLOAD_DIR=/home/ubuntu/upload/images
+      - UPLOAD_DIR=${UPLOAD_DIR}
+    volumes:
+      - ${UPLOAD_DIR}:${UPLOAD_DIR}
     depends_on:
       - redis
       - mariadb
