@@ -9,6 +9,6 @@ public class ReservationListByPatient {
 
     private String uuid;
     private String name;
-    private LocalDateTime reservationDate;
+    private LocalDateTime slot;
 
 }

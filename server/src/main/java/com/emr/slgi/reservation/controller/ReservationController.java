@@ -191,14 +191,10 @@ public class ReservationController {
     ) {
 
         if(patientUuid == null || Validate.regexValidate(Map.of(Validate.MEMBER_UUID_REGEX, patientUuid)).contains(false)) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, ReservationErrorMessage.CAN_NOT_FIND_PATIENT + CommonErrorMessage.RETRY);
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, ReservationErrorMessage.CAN_NOT_FIND_PATIENT + " " + CommonErrorMessage.RETRY);
         }
 
         List<ReservationListByPatient> list = rService.getReservationListPerPatient(patientUuid);
-
-        if(list == null) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, ReservationErrorMessage.CAN_NOT_FIND_RESERVATION_DATE);
-        }
 
         return ResponseEntity.ok(
                 Map.of(

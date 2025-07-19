@@ -64,11 +64,11 @@ import {common} from "@/util/common.js";
           </tr>
         </thead>
         <tbody>
-          <template v-if="reservationList.length > 0">
+          <template v-if="reservationList?.length > 0">
             <tr v-for="reservation in reservationList" :key="reservation.uuid">
               <td><input class="patient-reservation-check-input" type="checkbox" @change="checked" :value="reservation.uuid"></td>
               <td>{{reservation.name}}</td>
-              <td><span v-cloak>{{dayjs(reservation.reservationDate).format('MM월 DD일 HH시 mm분')}}</span></td>
+              <td><span v-cloak>{{dayjs(reservation.slot).format('MM월 DD일 HH시 mm분')}}</span></td>
             </tr>
           </template>
           <template v-else>

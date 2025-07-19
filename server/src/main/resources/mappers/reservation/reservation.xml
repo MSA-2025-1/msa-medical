@@ -101,11 +101,15 @@
 
     <select id="getReservationListPerPatient">
         SELECT
-            R.UUID, M.NAME, R.RESERVATION_DATE
+            R.UUID, M.NAME, S.SLOT
         FROM
+            (
             TB_RESERVATION R
                 JOIN TB_MEMBER M
                 ON(R.DOCTOR_UUID = M.UUID)
+            )
+                JOIN TB_SLOT S
+                ON(R.SLOT_ID = S.ID)
         WHERE
             R.PATIENT_UUID = #{patientUuid}
             AND
