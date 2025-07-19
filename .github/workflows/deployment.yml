@@ -1,8 +1,8 @@
 name: SlgiEMR
 on: 
-  push: # 동작시 어떤 것을 가지고 동작할 것인가
-    branches: [main]
-  workflow_dispatch: #테스트용
+  push: 
+    branches: [reg-reservation-refactor]
+  workflow_dispatch: 
   
 jobs:
     
