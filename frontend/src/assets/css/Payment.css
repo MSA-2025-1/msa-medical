@@ -26,7 +26,7 @@
     align-items: center;
   }
   
-  button.btn {
+  payment.btn {
     padding: 8px 16px;
     border: 1px solid #007bff;
     background-color: white;
@@ -37,12 +37,12 @@
     transition: all 0.2s;
   }
   
-  button.btn:hover {
+  payment.btn:hover {
     background-color: #007bff;
     color: white;
   }
   
-  button.btn-primary {
+  payment.btn-primary {
     align-self: flex-start;
   }
   .x-btn {

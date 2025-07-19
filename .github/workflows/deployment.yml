@@ -1,8 +1,8 @@
 name: SlgiEMR
 on: 
-  push: 
-    branches: [reg-reservation-refactor]
-  workflow_dispatch: 
+  push:
+    branches: [main]
+  workflow_dispatch:
   
 jobs:
     

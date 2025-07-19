@@ -73,7 +73,7 @@
 import { customFetch } from '@/util/customFetch';
 import { ENDPOINTS } from '@/util/endpoints';
 import { computed, reactive, ref } from 'vue';
-import '@/assets/css/payment.css'
+import '@/assets/css/Payment.css'
 
 const isSubmit = ref(false) // 결재완료 버튼 누를시 없어짐
 const props = defineProps({

@@ -13,7 +13,7 @@
 <script setup>
   import PaymentWindow from './PaymentWindow.vue'
   import VisitHistoryDetail from '../diagnosis/VisitHistoryDetail.vue'
-  import '@/assets/css/payment.css'
+  import '@/assets/css/Payment.css'
   const emit = defineEmits(['back'])
   const props = defineProps({item: Object})
   </script>

@@ -1,6 +1,7 @@
 package com.emr.slgi.auth.filter;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -9,8 +10,10 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
+import org.springframework.util.AntPathMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import com.emr.slgi.config.SecurityConstants;
 import com.emr.slgi.member.enums.MemberRole;
 import com.emr.slgi.util.JwtUtil;
 
@@ -26,10 +29,19 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
+    private final AntPathMatcher matcher = new AntPathMatcher();
+
     private final JwtUtil jwtUtil;
 
     @Value("${jwt.access-token-secret}")
     private String jwtSecret;
+
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+        String path = request.getServletPath();
+        return Arrays.stream(SecurityConstants.PUBLIC_URLS)
+            .anyMatch(pattern -> matcher.match(pattern, path));
+    }
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)

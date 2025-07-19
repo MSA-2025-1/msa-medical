@@ -36,7 +36,7 @@
           <input type="number" v-model.number="item.timesPerDay" min="1" class="volume-input"  placeholder="1회 복용"/>회
           <input type="number" v-model.number="item.perDay" min="1" class="volume-input" placeholder="1일 복용" />일
           <input type="text" v-model="item.instructions" class="volume-input"placeholder="복용 방법" />
-          <button @click="removeDisease(index)" class="x-btn" >x</button>
+          <button @click="removeMedicine(index)" class="medicine-remove-btn" >x</button>
         </li>
       </ul>
     </div>

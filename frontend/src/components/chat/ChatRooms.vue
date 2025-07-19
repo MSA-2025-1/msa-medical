@@ -29,7 +29,7 @@
       <span v-if="room.count > 0" class="chat-rooms-count">{{ room.count }}</span>
     </div>
     <div class="chat-rooms-date">
-      {{ dayjs(room.lastMessageTime).format('A h:mm:ss') }}
+      {{ dayjs.utc(room.lastMessageTime).tz('Asia/Seoul').format('A h:mm') }}
     </div>
 </li>
 </ul>
@@ -51,7 +51,11 @@ import 'dayjs/locale/ko'
 import { getStompClient, sendMsg, subscribeChannel } from '@/util/stompMethod';
 import ChatRoom from './ChatRoom.vue';
 import Alarm from './Alarm.vue';
+import utc from 'dayjs/plugin/utc'
+import timezone from 'dayjs/plugin/timezone'
 dayjs.locale('ko') // 오후 || 오전 표시 해주는거
+dayjs.extend(utc)
+dayjs.extend(timezone)
 
 const opne = defineEmits('open')
 const userStore = useUserStore();

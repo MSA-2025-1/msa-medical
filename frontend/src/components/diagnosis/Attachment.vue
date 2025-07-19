@@ -20,6 +20,14 @@
         <div class="attachment-placeholder">이미지를 클릭하여 업로드</div>
       </template>
     </div>
+    <input
+      ref="fileInput"
+      type="file"
+      accept="image/*"
+      multiple
+      @change="onFileChange"
+      class="attachment-hidden-input"
+    />
   </div>
 </template>
 
