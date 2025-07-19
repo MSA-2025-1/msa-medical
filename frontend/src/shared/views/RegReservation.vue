@@ -32,11 +32,17 @@ import '@/assets/css/icons.css';
   });
   
   const hasTimeSlots = computed(() => {
-    return reservationTime.value?.allSlots && reservationTime.value.allSlots.length > 0;
+    return reservationTime.value?.allSlots !== undefined;
   });
   
   const hasAvailableSlots = computed(() => {
-    return hasTimeSlots.value && allSlots.value.length > 0;
+    if (!allSlots.value || allSlots.value.length === 0) return false;
+    
+    const allSlotIds = allSlots.value.map(slot => String(slot.id));
+    const allReserved = allSlotIds.every(id => reservedSlotIds.value.includes(id));
+    
+    return !allReserved;
+
   });
 
   const router = useRouter();
@@ -128,7 +134,7 @@ import '@/assets/css/icons.css';
       await router.push({name: 'staffMain'});
     }
 
-}
+  }
 
   const makeReservation = () => {
 
