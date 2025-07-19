@@ -16,6 +16,5 @@ public class FindReservationDate {
     private String patientUuid;
     private String doctorUuid;
     private LocalDateTime dateTime;
-    private boolean isToday;
 
 }

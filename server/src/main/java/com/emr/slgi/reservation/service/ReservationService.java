@@ -42,6 +42,8 @@ public class ReservationService {
 
         jdbcTemplate.execute("SET innodb_lock_wait_timeout = 5");
 
+
+
         if(slotDAO.checkSlotExistence(rs.getSlotId()) == 0) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, SlotErrorMessage.IS_NOT_EXISTED_TIME.getMessage());
         }
@@ -74,9 +76,7 @@ public class ReservationService {
 
     public List<ReservationList> getReservationSlots(FindReservationDate reservation) {
 
-        if(reservation.getDateTime().toLocalDate().isEqual(LocalDate.now())) {
-            reservation.setToday(true);
-        } else {
+        if(reservation.getDateTime().toLocalDate().isAfter(LocalDate.now())) {
             reservation.setDateTime(reservation.getDateTime().toLocalDate().atStartOfDay());
         }
 
@@ -94,9 +94,9 @@ public class ReservationService {
 
     }
 
-    public Optional<List<ReservationList>> getFullReservationList(String doctorUuid, LocalDateTime date) {
+    public List<ReservationList> getFullReservationList(String doctorUuid, LocalDateTime date) {
         log.info("날짜 : {}", String.valueOf(date));
-        return Optional.ofNullable(rDao.getFullReservationList(doctorUuid, date));
+        return rDao.getFullReservationList(doctorUuid, date);
 
     }
 
@@ -122,9 +122,7 @@ public class ReservationService {
 
     public List<Slot> getAllSlots(FindReservationDate reservation) {
 
-        if(reservation.getDateTime().toLocalDate().isEqual(LocalDate.now())) {
-            reservation.setToday(true);
-        } else {
+        if(reservation.getDateTime().toLocalDate().isAfter(LocalDate.now())) {
             reservation.setDateTime(reservation.getDateTime().toLocalDate().atStartOfDay());
         }
 

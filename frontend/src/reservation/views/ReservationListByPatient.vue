@@ -2,7 +2,7 @@
 
 import {computed, onMounted, reactive, ref} from "vue";
 import dayjs from "dayjs";
-import {patientMethods} from "@/reservation/util/reservation.js";
+import {reservation} from "@/reservation/util/reservation.js";
 import {useUserStore} from "@/stores/userStore.js";
 import '@/assets/css/reservation.css'
 import {errorMessage} from "@/util/errorMessage.js";
@@ -24,7 +24,7 @@ import {common} from "@/util/common.js";
 
   const reservationListPerPatient = async () => {
 
-    reservationList.value = await patientMethods.getReservationListPerPatient(userInfo.value.uuid);
+    reservationList.value = await reservation.getReservationListPerPatient(userInfo.value.uuid);
 
   }
 
@@ -39,7 +39,7 @@ import {common} from "@/util/common.js";
       return;
     }
 
-    await patientMethods.cancelReservation(selectedListByPatient);
+    await reservation.cancelReservation(selectedListByPatient);
     selectedListByPatient.clear();
     await reservationListPerPatient();
 

@@ -4,18 +4,6 @@
 
 <mapper namespace="com.emr.slgi.reservation.dao.SlotDAO">
 
-    <sql id="afterToday">
-        SLOT > #{dateTime}
-    </sql>
-
-    <sql id="today">
-        <![CDATA[
-        SLOT >= #{dateTime}
-        AND
-        SLOT < DATE_ADD(DATE(#{dateTime}), INTERVAL 1 DAY)
-        ]]>
-    </sql>
-
     <select id="checkSlotExistence">
         SELECT
             COUNT(*)
@@ -41,14 +29,11 @@
         FROM
             TB_SLOT
         WHERE
-        <choose>
-            <when test="isToday">
-                <include refid="today"/>
-            </when>
-            <otherwise>
-                <include refid="afterToday"/>
-            </otherwise>
-        </choose>
+            SLOT
+            BETWEEN
+                #{dateTime}
+            AND
+                DATE_ADD(DATE(#{dateTime}), INTERVAL 1 DAY)
     </select>
 
 </mapper>

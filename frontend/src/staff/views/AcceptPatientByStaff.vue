@@ -1,7 +1,7 @@
 <script setup>
 import {onMounted, reactive, ref} from "vue";
 import {common} from "@/util/common.js";
-import {patientMethods} from "@/reservation/util/reservation.js";
+import {reservation} from "@/reservation/util/reservation.js";
 import {customFetch} from "@/util/customFetch.js";
 import {ENDPOINTS} from "@/util/endpoints.js";
 import {omit} from "lodash";
@@ -48,7 +48,7 @@ import '@/assets/css/icons.css'
   }
 
   async function getDoctorList () {
-    doctorList.value = await patientMethods.getDoctorList();
+    doctorList.value = await reservation.getDoctorList();
   }
 
   const acceptPatientByStaff = async () => {

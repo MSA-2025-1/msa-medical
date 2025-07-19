@@ -3,7 +3,7 @@ import {ref, reactive, onMounted, computed, onBeforeUnmount} from 'vue'
 import VueDatepicker from '@vuepic/vue-datepicker'
 import '@vuepic/vue-datepicker/dist/main.css'
 import {common} from '@/util/common.js'
-import { patientMethods } from '@/reservation/util/reservation.js'
+import { reservation } from '@/reservation/util/reservation.js'
 import {omit} from 'lodash'
 import dayjs from "dayjs";
 import {errorMessage} from "@/util/errorMessage.js";
@@ -14,13 +14,45 @@ import '@/assets/css/RegReservation.css';
 import '@/assets/css/icons.css';
 
   const userInfo = computed(() => useUserStore().user);
+  
+  const allSlots = computed(() => {
+    if (!reservationTime.value?.allSlots) return [];
+    return reservationTime.value.allSlots;
+  });
+  
+  const reservedSlotIds = computed(() => {
+    if (!reservationTime.value?.reservatedSlots) return [];
+    return reservationTime.value.reservatedSlots.map(slot => slot.slotId);
+  });
+  
+  const isSlotReserved = computed(() => {
+    return (slotId) => {
+      return reservedSlotIds.value.includes(String(slotId));
+    };
+  });
+  
+  const hasTimeSlots = computed(() => {
+    return reservationTime.value?.allSlots && reservationTime.value.allSlots.length > 0;
+  });
+  
+  const hasAvailableSlots = computed(() => {
+    return hasTimeSlots.value && allSlots.value.length > 0;
+  });
+
   const router = useRouter();
   const route = useRoute();
+  const isDropdownOpen = ref(false);
+  const doctorList = ref();
+  const reservationTime = ref();
+  const today = dayjs();
+  const minDate = today.toDate();
+  const maxDate = today.add(6, 'day').toDate();
 
   const selectedVal = reactive({
     doctorUuid: null,
     patientUuid: null,
     reservationDate: new Date(),
+    slotId: null,
     time: null,
     symptom: null,
     name: null,
@@ -34,17 +66,10 @@ import '@/assets/css/icons.css';
     symptomChk : false
   });
 
-  const doctorList = ref();
-  const reservationTime = ref();
-  const today = dayjs();
-  const minDate = today.toDate();
-  const maxDate = today.add(6, 'day').toDate();
-
   const selectDoctor = (doctor) => {
 
     selectedVal.doctorUuid = doctor.uuid;
     selectedVal.name = doctor.name;
-
     reservationChk.doctorChk = true;
 
     handleDate(selectedVal.reservationDate);
@@ -53,9 +78,7 @@ import '@/assets/css/icons.css';
 
   const handleDate = async (selectedDate) => {
 
-    console.log("handleDate selectedDate:", selectedDate);
     selectedVal.reservationDate = selectedDate;
-
     reservationChk.dateChk = true;
 
     if(!reservationChk.doctorChk) {
@@ -63,17 +86,11 @@ import '@/assets/css/icons.css';
       return;
     }
 
-    reservationTime.value = await patientMethods.getReservationTime(selectedVal);
+    reservationTime.value = await reservation.getSlots(selectedVal);
 
-    // 예약 정보를 가져오지 못했을 때, 타임 슬롯 생성 막기
     if(reservationTime.value === false) {
       return;
     }
-
-
-
-    console.log("다시 프론트");
-    console.log(reservationTime.value);
 
   }
 
@@ -82,15 +99,10 @@ import '@/assets/css/icons.css';
   };
 
   const selectTime = (time) => {
-    selectedVal.time = time;
-    reservationChk.timeChk = true;
 
-    patientMethods.reservationHold({
-      patientUuid: selectedVal.patientUuid,
-      doctorUuid: selectedVal.doctorUuid,
-      dateTime :
-          dayjs(`${common.dateFormatter(selectedVal.reservationDate, 'YYYY-MM-DD')}T${selectedVal.time}:00`).toDate().toISOString()
-    })
+    selectedVal.time = time.slot;
+    selectedVal.slotId = time.id;
+    reservationChk.timeChk = true;
 
   }
 
@@ -106,10 +118,6 @@ import '@/assets/css/icons.css';
       await routeToHome();
     }
 
-    if(await patientMethods.cancelHoldingReservation(selectedVal.patientUuid)) {
-      await routeToHome();
-    }
-
   }
 
   const routeToHome = async() => {
@@ -122,9 +130,7 @@ import '@/assets/css/icons.css';
 
 }
 
-  const reservation = () => {
-    console.log(selectedVal.reservationDate);
-    console.log(selectedVal.time);
+  const makeReservation = () => {
 
     for (const [key, value] of Object.entries(reservationChk)) {
       if (!value) {
@@ -133,32 +139,27 @@ import '@/assets/css/icons.css';
       }
     }
 
-    console.log("예약 수행 : ", selectedVal);
+    reservation.reservation({
 
-    patientMethods.reservation({
-
-      ...omit(selectedVal, ['reservationDate', 'time', 'name']), // date와 time, name 속성을 제외한 나머지 속성들을 복사
-      dateTime:
-          dayjs(`${common.dateFormatter(selectedVal.reservationDate, 'YYYY-MM-DD')}T${selectedVal.time}:00`).toDate().toISOString()
+      ...omit(selectedVal, ['reservationDate', 'time', 'name', 'isToday'])
 
     }, router, userInfo.value.role);
-
 
   }
 
   async function getDoctorList () {
-    doctorList.value = await patientMethods.getDoctorList();
+    doctorList.value = await reservation.getDoctorList();
   }
 
   const checkRole = () => {
 
-    if(userInfo.value.role === 'PATIENT') {
+    if(userInfo.value.role === roles.PATIENT) {
 
       selectedVal.patientUuid = userInfo.value.uuid;
 
     }
 
-    if(userInfo.value.role === 'DOCTOR' || userInfo.value.role === 'NURSE') {
+    if(userInfo.value.role === roles.DOCTOR || userInfo.value.role === roles.NURSE) {
 
       selectedVal.patientUuid = route.query.patientUuid;
 
@@ -166,7 +167,6 @@ import '@/assets/css/icons.css';
 
   }
 
-  const isDropdownOpen = ref(false);
   const toggleDropdown = () => {
     isDropdownOpen.value = !isDropdownOpen.value;
   };
@@ -187,6 +187,7 @@ import '@/assets/css/icons.css';
     checkRole();
     document.addEventListener('mousedown', handleClickOutside);
   });
+
   onBeforeUnmount(() => {
     document.removeEventListener('mousedown', handleClickOutside);
   });
@@ -201,7 +202,6 @@ import '@/assets/css/icons.css';
       예약등록
     </div>
     <form class="reg-reservation-form" @submit.prevent>
-      <!-- 의사 선택 -->
       <div class="reg-form-row">
         <label class="reg-form-label">의사<span class="reg-required">*</span></label>
         <div class="reg-dropdown-group">
@@ -220,7 +220,6 @@ import '@/assets/css/icons.css';
           </ul>
         </div>
       </div>
-      <!-- 날짜 선택 -->
       <div class="reg-form-row">
         <label class="reg-form-label">일자<span class="reg-required">*</span></label>
         <VueDatepicker
@@ -237,36 +236,39 @@ import '@/assets/css/icons.css';
           prevent-min-max-navigation
         />
       </div>
-      <!-- 시간 선택 -->
-      <div class="reg-form-row" v-if="reservationChk.dateChk && reservationChk.doctorChk && reservationTime">
+      <div class="reg-form-row" v-if="reservationChk.dateChk && reservationChk.doctorChk && hasTimeSlots">
         <label class="reg-form-label">시간<span class="reg-required">*</span></label>
         <div class="reg-time-group">
-          <template v-for="time in Array.from(reservationTime.filteredAvailableSlots).sort()" :key="time">
+          <template v-for="time in allSlots" :key="time.id">
             <button 
               type="button" 
               class="reg-btn-time" 
-              :class="{ active: selectedVal.time === time }"
-              :disabled="reservationTime.alreadyReservatedSlots.has(time)"
-              @click="selectTime(time)" ref="selectedVal.time" 
-              v-cloak>
-              {{time}}
+              :class="{ active: dayjs(selectedVal.time).isSame(dayjs(time.slot))}"
+              :disabled="isSlotReserved(time.id)"
+              @click="selectTime(time)" 
+              v-cloak
+            >
+              {{dayjs(time.slot).format('HH:mm')}}
             </button>
           </template>
-          <template v-if="!reservationTime.filteredAvailableSlots.size">
+          <template v-if="!hasAvailableSlots">
             <span class="reg-helper-danger">예약 가능한 시간대가 없습니다.</span>
           </template>
         </div>
       </div>
-      <!-- 증상 입력 -->
       <div class="reg-form-row" v-if="reservationChk.timeChk">
         <label class="reg-form-label">증상<span class="reg-required">*</span></label>
-        <textarea class="reg-form-input" aria-label="symptom" v-model="selectedVal.symptom"
-                  @change="writeSymptom" maxlength="100"
-                  placeholder="100자 이내로 작성해주세요."></textarea>
+        <textarea 
+          class="reg-form-input" 
+          aria-label="symptom" 
+          v-model="selectedVal.symptom"
+          @change="writeSymptom" maxlength="100"
+          placeholder="100자 이내로 작성해주세요."
+        >
+        </textarea>
       </div>
-      <!-- 버튼 -->
       <div class="reg-form-actions">
-        <button type="button" class="reg-btn-main" @click="reservation">예약</button>
+        <button type="button" class="reg-btn-main" @click="makeReservation">예약</button>
         <button type="button" class="reg-btn-sub" @click="goHome">취소</button>
       </div>
     </form>

@@ -152,14 +152,10 @@ export const ENDPOINTS = {
             method: 'get',
             url: `/reservation/getReservationList/${selectedVal.doctorUuid}/${selectedVal.dateTime}`
         }),
-        reservationHold: {
-            method: 'post',
-            url: '/reservation/hold'
-        },
-        cancelHoldingReservation: {
-            method: 'put',
-            url: '/reservation/cancelHoldingReservation'
-        },
+        getAllSlots: (dateTime) => ({
+            method: 'get',
+            url: `/reservation/allSlots/${dateTime}`
+        }),
         getFullReservationList: (uuid, date) => ({
             method: 'get',
             url: `/reservation/${uuid}/${date}/list`

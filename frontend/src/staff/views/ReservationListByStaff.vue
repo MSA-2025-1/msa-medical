@@ -4,7 +4,7 @@ import WaitingListDoctorName from "@/shared/components/WaitingListDoctorName.vue
 import WaitingListPatientList from "@/shared/components/WaitingListPatientList.vue";
 import {computed, onBeforeMount, onMounted, onUnmounted, reactive, ref} from "vue";
 import {useReservationListStore} from "@/stores/reservationListStore.js";
-import {patientMethods} from "@/reservation/util/reservation.js";
+import {reservation} from "@/reservation/util/reservation.js";
 import VueDatepicker from "@vuepic/vue-datepicker";
 import dayjs from "dayjs";
 import '@vuepic/vue-datepicker/dist/main.css'
@@ -61,7 +61,7 @@ const hideAfterDateMovement = computed(() => {
 // 상태 변경 시 동작하는 함수
 const handleUpdateStatus = async ({uuid, updateStatus}) => {
 
-    await patientMethods.updateReservationStatus({
+    await reservation.updateReservationStatus({
       uuid,
       updateStatus
     });

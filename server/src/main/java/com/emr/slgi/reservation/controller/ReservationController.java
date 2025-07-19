@@ -92,14 +92,16 @@ public class ReservationController {
     @PutMapping("/cancel")
     public ResponseEntity<?> cancelReservation(@RequestBody @Valid ReservationCancelForm rcf) {
 
-        if(rcf == null || Validate.regexValidation(Map.of(Validate.MEMBER_UUID_REGEX, rcf.getUuidForCancel())).contains(false)) {
+        if(Validate.regexValidation(Map.of(Validate.MEMBER_UUID_REGEX, rcf.getUuidForCancel())).contains(false)) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, ReservationErrorMessage.CAN_NOT_FIND_RESERVATION_DATE);
         }
 
         if(!rService.cancelReservation(rcf.getUuidForCancel())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, CommonErrorMessage.RETRY);
         }
+
         messagingTemplate.convertAndSend("/sub/status","{}");
+
         return ResponseEntity.ok(
                 Map.of(
                         "message", ReservationMessage.CANCEL_RESERVATION_SUCCESS.getMessage()
@@ -121,7 +123,7 @@ public class ReservationController {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, ReservationErrorMessage.CAN_NOT_FIND_DOCTOR_INFO + CommonErrorMessage.RETRY);
         }
 
-        List<ReservationList> reservationList = rService.getFullReservationList(doctorUuid, date).get();
+        List<ReservationList> reservationList = rService.getFullReservationList(doctorUuid, date);
 
         if(reservationList == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, ReservationErrorMessage.CAN_NOT_FIND_RESERVATION_DATE + CommonErrorMessage.RETRY);

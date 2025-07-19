@@ -4,18 +4,6 @@
 
 <mapper namespace="com.emr.slgi.reservation.dao.ReservationDAO">
 
-    <sql id="afterToday">
-        S.SLOT > #{dateTime}
-    </sql>
-
-    <sql id="today">
-        <![CDATA[
-            S.SLOT >= #{dateTime}
-            AND
-            S.SLOT < DATE_ADD(DATE(#{dateTime}), INTERVAL 1 DAY)
-        ]]>
-    </sql>
-
     <insert id="makeReservation">
         INSERT INTO
             TB_RESERVATION
@@ -38,7 +26,7 @@
             )
     </insert>
 
-    <select id="getReservationLSlots" resultType="com.emr.slgi.reservation.dto.ReservationList">
+    <select id="getReservationSlots" resultType="com.emr.slgi.reservation.dto.ReservationList">
         SELECT
             R.SLOT_ID, S.SLOT
         FROM
@@ -48,14 +36,12 @@
         WHERE
             DOCTOR_UUID = #{doctorUuid}
             AND
-            <choose>
-                <when test="isToday">
-                    <include refid="today"/>
-                </when>
-                <otherwise>
-                    <include refid="afterToday"/>
-                </otherwise>
-            </choose>
+            (SLOT
+                BETWEEN
+                #{dateTime}
+                AND
+                DATE_ADD(DATE (#{dateTime}), INTERVAL 1 DAY)
+            )
             AND
             STATUS IN ('RS01')
     </select>
