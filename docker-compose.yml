@@ -21,6 +21,7 @@ services:
     build:
       context: ./server
     image: ${USERNAME}/slgi-emr-backend
+    container_name: slgi-emr-backend
     env_file:
       .env
     depends_on:
@@ -31,6 +32,7 @@ services:
     build: 
       context: ./frontend
     image: ${USERNAME}/slgi-emr-frontend
+    container_name: slgi-emr-frontend
     ports:
       - ${FRONTEND_PORT}
     depends_on:
