@@ -4,18 +4,18 @@
     <template v-else>
       <form>
         <div class="mb-3">
-          <label class="form-label">아이디</label>
-          <input type="text" :value="member.userid" class="form-control" disabled>
+          <Label>아이디</Label>
+          <Input v-model="member.userid" disabled />
         </div>
         <div class="mb-3">
-          <label for="name" class="form-label">이름</label>
-          <input type="text" @input="checkNameValidity" v-model="member.name" class="form-control" id="name">
-          <div v-show="invalidity.name" v-text="invalidity.name" class="invalid-feedback d-block"></div>
+          <Label for="name">이름</Label>
+          <Input @input="checkNameValidity" v-model="member.name" id="name" />
+          <InvalidityMessage v-show="invalidity.name" v-text="invalidity.name" />
         </div>
         <div class="mb-3">
-          <label for="phone" class="form-label">전화번호</label>
-          <input type="text" @input="checkPhoneValidity" v-model="member.phone" class="form-control" id="phone">
-          <div v-show="invalidity.phone" v-text="invalidity.phone" class="invalid-feedback d-block"></div>
+          <Label for="phone">전화번호</Label>
+          <Input @input="checkPhoneValidity" v-model="member.phone" id="phone" />
+          <InvalidityMessage v-show="invalidity.phone" v-text="invalidity.phone" />
         </div>
       </form>
       <div class="d-flex justify-content-end gap-2">
@@ -27,6 +27,9 @@
 </template>
 
 <script setup>
+import Input from '@/common/components/Input.vue';
+import InvalidityMessage from '@/common/components/InvalidityMessage.vue';
+import Label from '@/common/components/Label.vue';
 import Loading from '@/common/components/Loading.vue';
 import { customFetch } from '@/util/customFetch';
 import { ENDPOINTS } from '@/util/endpoints';
