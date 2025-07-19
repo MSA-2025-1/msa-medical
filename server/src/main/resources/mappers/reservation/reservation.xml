@@ -46,14 +46,6 @@
             STATUS IN ('RS01')
     </select>
 
-    <select id="getAffectedRowsCount" resultType="int">
-        SELECT
-            IFNULL(COUNT(*), 0)
-        FROM TB_RESERVATION
-        WHERE
-            ${where}
-    </select>
-
     <update id="cancelReservation">
         UPDATE
             TB_RESERVATION

@@ -27,7 +27,8 @@ import '@/assets/css/icons.css';
   
   const isSlotReserved = computed(() => {
     return (slotId) => {
-      return reservedSlotIds.value.includes(String(slotId));
+      const res = reservedSlotIds.value.some(id => id == slotId);
+      return res;
     };
   });
   
